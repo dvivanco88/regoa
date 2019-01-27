@@ -1,17 +1,41 @@
-<div class="col-md-3">
-    <div class="card">
-        <div class="card-header">
-            Sidebar
-        </div>
+<div class="col-md-2">
+    
+    @if(Auth::user()->hasRole('Todo'))
+    <?php 
+    $laravelAdminMenus->menus = $laravelAdminMenus->menus
+    ?>
+    @else
+    <?php 
+    unset($laravelAdminMenus->menus[2]); 
+    unset($laravelAdminMenus->menus[3]); 
+    ?>
+    @endif
 
-        <div class="card-body">
-            <ul class="nav" role="tablist">
-                <li role="presentation">
-                    <a href="{{ url('/admin') }}">
-                        Dashboard
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
+    @foreach($laravelAdminMenus->menus as $section)        
+        @if($section->items)       
+            <div class="card border-light">
+                <div class="card-header">
+                   <b>{{ $section->section }}</b>
+                </div>
+
+                <div class="card-body ">
+                    <ul class="nav flex-column" role="tablist">
+                        @foreach($section->items as $menu)
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-item" href="{{ url($menu->url) }}">
+                                    
+                                    {{ $menu->title }}
+
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+            <br/>
+        
+        
+        
+        @endif
+    @endforeach
 </div>
