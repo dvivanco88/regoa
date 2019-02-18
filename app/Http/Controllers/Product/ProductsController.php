@@ -31,6 +31,20 @@ class ProductsController extends Controller
         return view('product.products.index', compact('products'));
     }
 
+    public function productinfo(Request $request){
+        $count = 0;
+
+        foreach ($request['products'] as $key => $item){
+            $product = Product::find((int)$item);
+            $count += ((int)$product->price_retail * (int)$request['quantities'][$key]);
+        };
+
+        //$data = Product::all(); // This will get all the request data.
+        return response()->json($count);
+        //dd($request); // This will dump and die
+      
+    }
+
     /**
      * Show the form for creating a new resource.
      *

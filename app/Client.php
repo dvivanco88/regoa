@@ -35,8 +35,13 @@ class Client extends Model
 
     public function type_client()
     {
-        return $this->belongsTo('TypeClient');
+        return $this->belongsTo(TypeClient::class);
     }
+
+    public function order_clients()
+    {
+        return $this->hasMany('App\OrderClient');
+    }  
     
 
     /**

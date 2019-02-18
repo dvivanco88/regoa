@@ -6,13 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- CSRF Token -->
+    
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="{{ asset('css/fontawesome/css/all.css') }}" rel="stylesheet">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="{{ asset('js/chosen/chosen.css') }}">
+    
 </head>
 <body>
     <div id="app">
@@ -35,69 +39,82 @@
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         @guest
-                            <li><a class="nav-link" href="{{ url('/login') }}">Login</a></li>
-                            <li><a class="nav-link" href="{{ url('/register') }}">Register</a></li>
+                        <li><a class="nav-link" href="{{ url('/login') }}">Login</a></li>
+                        <li><a class="nav-link" href="{{ url('/register') }}">Register</a></li>
                         @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {{ Auth::user()->name }} <span class="caret"></span>
-                                </a>
+                        <li class="nav-item dropdown">
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ Auth::user()->name }} <span class="caret"></span>
+                            </a>
 
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ url('/logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        Logout
-                                    </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ url('/logout') }}"
+                                onclick="event.preventDefault();
+                                document.getElementById('logout-form').submit();">
+                                Logout
+                            </a>
 
-                                    <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                        @endguest
-                    </ul>
-                </div>
+                            <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </div>
+                    </li>
+                    @endguest
+                </ul>
             </div>
-        </nav>
-
-        <main class="py-4">
-            @if (Session::has('flash_message'))
-                <div class="container">
-                    <div class="alert alert-success">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        {{ Session::get('flash_message') }}
-                    </div>
-                </div>
-            @endif
-
-            @yield('content')
-        </main>
-
-        <hr/>
-
-        <div class="container">
-            &copy; {{ date('Y') }}. Creado por <a href="http://www.sidspro.com">SIDSPRO</a>
-            <br/>
         </div>
+    </nav>
 
+    <main class="py-4">
+        @if (Session::has('flash_message'))
+        <div class="container">
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                {{ Session::get('flash_message') }}
+            </div>
+        </div>
+        @endif
+
+        @yield('content')
+    </main>
+
+    <hr/>
+
+    <div class="container">
+        &copy; {{ date('Y') }}. Creado por <a href="http://www.sidspro.com">SIDSPRO</a>
+        <br/>
     </div>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.8.1/tinymce.min.js"></script>
-    <script type="text/javascript">
-        tinymce.init({
-            selector: '.crud-richtext'
-        });
-    </script>
-    <script type="text/javascript">
-        $(function () {
+</div>
+
+<!-- Scripts -->
+
+<script src="{{ asset('js/chosen/docsupport/jquery-3.2.1.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/app.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/tinymce.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/chosen/chosen.jquery.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/thisPrint/printThis.js') }}"  type="text/javascript"></script>
+
+<script type="text/javascript">
+    tinymce.init({
+        selector: '.crud-richtext'
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
             // Navigation active
             $('ul.navbar-nav a[href="{{ "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" }}"]').closest('li').addClass('active');
         });
-    </script>
+    $('form').on('focus', 'input[type=number]', function (e) {
+      $(this).on('mousewheel.disableScroll', function (e) {
+        e.preventDefault()
+    })
+  })
+    $('form').on('blur', 'input[type=number]', function (e) {
+      $(this).off('mousewheel.disableScroll')
+  })
+</script>
 
-    @yield('scripts')
+@yield('scripts')
 </body>
 </html>

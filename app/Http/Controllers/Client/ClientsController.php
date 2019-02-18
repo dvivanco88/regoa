@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\TypeClient;
 
 use App\Client;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class ClientsController extends Controller
         $perPage = 25;
 
         if (!empty($keyword)) {
-            $clients = Client::where('name', 'LIKE', "%$keyword%")
+            $clients = Client::with('type_client')->where('name', 'LIKE', "%$keyword%")
                 ->orWhere('contact', 'LIKE', "%$keyword%")
                 ->orWhere('adress', 'LIKE', "%$keyword%")
                 ->orWhere('email', 'LIKE', "%$keyword%")
@@ -34,7 +35,7 @@ class ClientsController extends Controller
                 ->orWhere('contact_position', 'LIKE', "%$keyword%")
                 ->latest()->paginate($perPage);
         } else {
-            $clients = Client::latest()->paginate($perPage);
+            $clients = Client::with('type_client')->latest()->paginate($perPage);
         }
 
         return view('client.clients.index', compact('clients'));
@@ -47,7 +48,10 @@ class ClientsController extends Controller
      */
     public function create()
     {
-        return view('client.clients.create');
+        $t_c = TypeClient::select('id', 'name')->where('is_active', '=' , true)->get();
+        $t_c = $t_c->pluck('name', 'id');
+
+        return view('client.clients.create', compact('t_c'));
     }
 
     /**
@@ -61,16 +65,17 @@ class ClientsController extends Controller
     {
         $this->validate($request, [
 			'name' => 'required',
-			'contact' => 'required',
 			'telephone1' => 'required',
-			'type_business' => 'required',
-			'contact_position' => 'required'
+            'type_client_id' => 'required',
+            'email' => 'required',
+            'adress' => 'required'
+			
 		]);
         $requestData = $request->all();
         
         Client::create($requestData);
 
-        return redirect('client/clients')->with('flash_message', 'Client added!');
+        return redirect('client/clients')->with('flash_message', 'Cliente agregado!');
     }
 
     /**
@@ -82,7 +87,7 @@ class ClientsController extends Controller
      */
     public function show($id)
     {
-        $client = Client::findOrFail($id);
+        $client = Client::with('type_client')->findOrFail($id);
 
         return view('client.clients.show', compact('client'));
     }
@@ -95,10 +100,16 @@ class ClientsController extends Controller
      * @return \Illuminate\View\View
      */
     public function edit($id)
-    {
-        $client = Client::findOrFail($id);
+    {   
+       
 
-        return view('client.clients.edit', compact('client'));
+        $client = Client::with('type_client')->findOrFail($id);
+        
+        $t_c = TypeClient::select('id', 'name')->where('is_active', '=' , true)->get();
+        $t_c = $t_c->pluck('name', 'id');
+        
+
+        return view('client.clients.edit', compact('client', 't_c'));
     }
 
     /**
@@ -113,17 +124,17 @@ class ClientsController extends Controller
     {
         $this->validate($request, [
 			'name' => 'required',
-			'contact' => 'required',
-			'telephone1' => 'required',
-			'type_business' => 'required',
-			'contact_position' => 'required'
+            'telephone1' => 'required',
+            'type_client_id' => 'required',
+            'email' => 'required',
+            'adress' => 'required'
 		]);
         $requestData = $request->all();
         
         $client = Client::findOrFail($id);
         $client->update($requestData);
 
-        return redirect('client/clients')->with('flash_message', 'Client updated!');
+        return redirect('client/clients')->with('flash_message', 'Cliente actualizado!');
     }
 
     /**
@@ -137,6 +148,6 @@ class ClientsController extends Controller
     {
         Client::destroy($id);
 
-        return redirect('client/clients')->with('flash_message', 'Client deleted!');
+        return redirect('client/clients')->with('flash_message', 'Cliente eliminado!');
     }
 }

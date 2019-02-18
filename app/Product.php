@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+
+
 class Product extends Model
 {
     use LogsActivity;
@@ -32,7 +34,20 @@ class Product extends Model
     protected $fillable = ['name', 'is_active', 'price_business', 'price_wholesale', 'price_retail'];
 
     
+    public function inventories()
+    {
+        return $this->hasMany('App\Inventory');
+    }
 
+    public function order_clients()
+    {
+        return $this->hasMany('App\OrderClient');
+    }
+
+    
+
+
+    
     /**
      * Change activity log event description
      *

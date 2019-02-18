@@ -21,7 +21,8 @@
 </div>
 <div class="form-group{{ $errors->has('roles') ? ' has-error' : ''}}">
     {!! Form::label('role', 'Rol: ', ['class' => 'control-label']) !!}
-    {!! Form::select('roles[]', $roles, isset($user_roles) ? $user_roles : [], ['class' => 'form-control', 'multiple' => false]) !!}
+    {!! Form::select('role', $roles, isset($user_roles) ? $user_roles : [], ['class' => 'form-control', 'multiple' => false]) !!}
+    {!! $errors->first('role', '<p class="help-block">:message</p>') !!}
 </div>
 <div class="form-group{{ $errors->has('is_active') ? 'has-error' : ''}}">
     {!! Form::label('is_active', 'Activo?', ['class' => 'control-label']) !!}

@@ -17,23 +17,41 @@ Auth::routes();
 
 
 //Auth::routes();
-Route::get('/home', 'HomeController@index')->name('home');
+
 Route::get('/', 'HomeController@index')->name('home');
 
-Route::get('admin', 'Admin\AdminController@index');
-Route::resource('admin/roles', 'Admin\RolesController');
-Route::resource('admin/permissions', 'Admin\PermissionsController');
-Route::resource('admin/users', 'Admin\UsersController');
-Route::resource('admin/pages', 'Admin\PagesController');
-Route::resource('admin/activitylogs', 'Admin\ActivityLogsController')->only([
-    'index', 'show', 'destroy'
-]);
+Route::middleware(['auth'])->group(function () {
+	//Route::get('/home', 'HomeController@index')->name('home');
+	//Route::get('/admin', 'Admin\AdminController@index')->name('home');
+	Route::get('/request/product',['uses'=>'Product\\ProductsController@productinfo']);
+	
 
-Route::resource('admin/settings', 'Admin\SettingsController');
-Route::get('admin/generator', ['uses' => '\Appzcoder\LaravelAdmin\Controllers\ProcessController@getGenerator']);
-Route::post('admin/generator', ['uses' => '\Appzcoder\LaravelAdmin\Controllers\ProcessController@postGenerator']);
+	Route::prefix('admin')->group(function () {
+		Route::get('/', 'Admin\AdminController@index');
+		Route::resource('/roles', 'Admin\RolesController');
+		Route::resource('/permissions', 'Admin\PermissionsController');
+		Route::resource('/users', 'Admin\UsersController');
+		Route::resource('/pages', 'Admin\PagesController');
+		Route::resource('/activitylogs', 'Admin\ActivityLogsController')->only([
+			'index', 'show', 'destroy'
+		]);
 
-Route::resource('product/products', 'Product\\ProductsController');
-Route::resource('stat/stats', 'Stat\\StatsController');
-Route::resource('type_client/type-clients', 'TypeClient\\TypeClientsController');
-Route::resource('client/clients', 'Client\\ClientsController');
+		Route::resource('/settings', 'Admin\SettingsController');
+		Route::get('/generator', ['uses' => '\Appzcoder\LaravelAdmin\Controllers\ProcessController@getGenerator']);
+		Route::post('/generator', ['uses' => '\Appzcoder\LaravelAdmin\Controllers\ProcessController@postGenerator']);
+
+	});
+
+	Route::resource('product/products', 'Product\\ProductsController');
+	Route::resource('stat/stats', 'Stat\\StatsController');
+	Route::resource('type_client/type-clients', 'TypeClient\\TypeClientsController');
+	Route::resource('client/clients', 'Client\\ClientsController');
+	Route::resource('warehouse/warehouses', 'warehouse\\WarehousesController');
+	Route::resource('inventory/inventories', 'Inventory\\InventoriesController');
+	Route::resource('order_client/order-clients', 'OrderClient\\OrderClientsController');
+	Route::get('order_client/order_clients/delete',['uses'=>'OrderClient\\OrderClientsController@delete_product_edit']);
+	
+
+	Route::resource('order/orders', 'Order\\OrdersController');
+});
+

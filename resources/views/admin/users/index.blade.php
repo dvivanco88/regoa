@@ -51,7 +51,7 @@
                                         @endif </td>
                                         <td>
                                             <a href="{{ url('/admin/users/' . $item->id) }}" title="View User"><button class="btn btn-info btn-sm"><i class="fa fa-eye" aria-hidden="true"></i></button></a>
-                                            <a href="{{ url('/admin/users/' . $item->id . '/edit') }}" title="Edit User"><button class="btn btn-primary btn-sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button></a>
+                                            <a href="{{ url('/admin/users/' . $item->id . '/edit') }}" title="Edit User"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i></button></a>
                                             
                                             @if(Auth::user()->hasRole('Todo'))
                                             {!! Form::open([
@@ -59,7 +59,7 @@
                                                 'url' => ['/admin/users', $item->id],
                                                 'style' => 'display:inline'
                                             ]) !!}
-                                                {!! Form::button('<i class="fa fa-trash-o" aria-hidden="true"></i>', array(
+                                                {!! Form::button('<i class="fas fa-trash-alt"></i>', array(
                                                         'type' => 'submit',
                                                         'class' => 'btn btn-danger btn-sm',
                                                         'title' => 'Delete User',

@@ -30,17 +30,22 @@
                             <table class="table table-borderless">
                                 <thead>
                                     <tr>
-                                        <th>#</th><th>Name</th><th>Contact</th><th>Adress</th><th>Actions</th>
+                                        <th>#</th>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>Tipo de Cliente</th>
+                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($clients as $item)
                                     <tr>
                                         <td>{{ $loop->iteration or $item->id }}</td>
-                                        <td>{{ $item->name }}</td><td>{{ $item->contact }}</td><td>{{ $item->adress }}</td>
+                                        <td>{{ $item->name }}</td><td>{{ $item->email }}</td><td>{{ $item->telephone1 }}</td><td>{{ $item->type_client->name }}</td>
                                         <td>                                            
                                             <a href="{{ url('/client/clients/' . $item->id) }}" title="View Client"><button class="btn btn-info btn-sm"><i class="fa fa-eye" aria-hidden="true"></i></button></a>
-                                            <a href="{{ url('/client/clients/' . $item->id . '/edit') }}" title="Edit Client"><button class="btn btn-primary btn-sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button></a>
+                                            <a href="{{ url('/client/clients/' . $item->id . '/edit') }}" title="Edit Client"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i></button></a>
 
                                             @if (Auth::user()->hasRole('Todo'))
                                             {!! Form::open([
@@ -48,7 +53,7 @@
                                                 'url' => ['/client/clients', $item->id],
                                                 'style' => 'display:inline'
                                             ]) !!}
-                                                {!! Form::button('<i class="fa fa-trash-o" aria-hidden="true"></i>', array(
+                                                {!! Form::button('<i class="fas fa-trash-alt"></i>', array(
                                                         'type' => 'submit',
                                                         'class' => 'btn btn-danger btn-sm',
                                                         'title' => 'Delete Client',

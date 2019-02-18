@@ -11,7 +11,7 @@
                     <div class="card-body">
 
                         <a href="{{ url('/type_client/type-clients') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
-                        <a href="{{ url('/type_client/type-clients/' . $typeclient->id . '/edit') }}" title="Edit TypeClient"><button class="btn btn-primary btn-sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Editar</button></a>
+                        <a href="{{ url('/type_client/type-clients/' . $typeclient->id . '/edit') }}" title="Edit TypeClient"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button></a>
 
                                             @if (Auth::user()->hasRole('Todo'))
                         {!! Form::open([
@@ -19,7 +19,7 @@
                             'url' => ['type_client/typeclients', $typeclient->id],
                             'style' => 'display:inline'
                         ]) !!}
-                            {!! Form::button('<i class="fa fa-trash-o" aria-hidden="true"></i> Eliminar', array(
+                            {!! Form::button('<i class="fas fa-trash-alt"></i> Eliminar', array(
                                     'type' => 'submit',
                                     'class' => 'btn btn-danger btn-sm',
                                     'title' => 'Delete TypeClient',
