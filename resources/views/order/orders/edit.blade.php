@@ -12,7 +12,7 @@
                     <a href="{{ url('/order/orders') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
                     <br />
                     <br />
-
+                    
                     @if ($errors->any())
                     <ul class="alert alert-danger">
                         @foreach ($errors->all() as $error)
@@ -41,7 +41,8 @@
 
     @section('scripts')
     <script type="text/javascript">
-
+        $('.order_show').removeClass('d-none');
+        
        $('#add_product').hide();
        $('#add_product_edit').show();
        $(".delete_trash_new:first").hide();

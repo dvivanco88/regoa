@@ -33,12 +33,14 @@
 
                             <span class="btn btn-success" id='btn_print' style="margin-bottom: 10px;">Imprimir</span>
 
+                            <a id="print_ticket" href="#" class="btn btn-secondary" style="margin-bottom: 10px;">Imprimir Ticket</a>
+
                             <div class="table-responsive print-order">
 
 
                                 <table class="table">
                                     <tbody>
-                                        <tr>
+                                        <tr style="background-color: #E2E2E2;">
                                             <th>Orden #: {{ $order->id }}</th>
                                             <th> Cliente: {{ $client->name }}</th>
                                             <th> Estado: {{ $order->stat->name }}</th>
@@ -65,59 +67,71 @@
                                                 </td>
                                                 <td> Tipo de Pago: {{ $order->type_pay }}</td>
                                             </tr>
-                                            <tr>
-                                                <td> Anticipo: ${{ $order->advance }}</td>
-                                                <td> Total: ${{ $order->cost }}</td>
-                                                <td> Adeudo: ${{ $order->due }}</td>
-                                            </tr>
+                                            
                                             <tr>
                                                 <td colspan="3">
                                                     <h4>Productos</h4><br>
                                                     <div class="col-md-12">
-                                                        <table style=" margin: auto;width: 50% !important; ">
-                                                            <tr>
-                                                                <th>Producto</th>
-                                                                <th>Cantidad</th>
-                                                            </tr>
+                                                        <table style=" margin: auto;width: 100% !important; ">
+
                                                             <tbody>
 
+                                                                <thead>
+                                                                    <tr style="background-color: #E2E2E2; width: 100%;">
+                                                                        <th>Artículo</th>
+                                                                        <th>Cantidad</th>
+                                                                        <th>Precio Unitario</th>
+                                                                        <th>Subtotal</th>
+                                                                    </tr>
+                                                                </thead>
+
+                                                                @foreach($products as $product)   
+                                                                <tr style="border: 1px solid #dee2e6">
+                                                                    <td>{{ $product->name }}</td>
+                                                                    <td>{{ $product->quantity }}</td>
+                                                                    <td>$ {{ $product->cost }}</td>
+                                                                    <td>$ {{ $product->cost * $product->quantity }}</td>
+                                                                </tr>
+                                                                @endforeach
                                                             </tbody>
-
-                                                            @foreach($products as $product)   
-                                                            <tr>
-                                                                <td>{{ $product->name }}</td>
-                                                                <td>{{ $product->quantity }}</td>
-                                                            </tr>
-                                                            @endforeach
-
                                                         </table>
                                                     </div>
 
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td colspan="3">Observaciones: {{ $order->observations }}</td>                                            
-                                            </tr>
+                                            <tr style="background-color: #E2E2E2;">
+                                                <td> Anticipo: $ {{ $order->advance }}</td>      
+                                                <td> Adeudo: $ {{ $order->due }}</td>
+                                                <th> Total: $ {{ $order->cost }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3">Observaciones: {{ $order->observations }}</td>                                            
+                                                </tr>
 
-                                        </tbody>
-                                    </table>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            @endsection
+                @endsection
 
-            @section('scripts')
-            <script type="text/javascript">
-                
-                $("#btn_print").click(function() {
-                  $('.print-order').printThis();
-              });
+                @section('scripts')
+                <script type="text/javascript">
 
-                
+                    $("#btn_print").click(function() {
+                      $('.print-order').printThis();
+                  });
 
-          </script>
-          @endsection
+                    document.getElementById("print_ticket").addEventListener("click", function(){
+                        const ventana = window.open("/ticket/index.php?order={{ $order->id }}","_blank");
+                        setTimeout(function(){
+                            ventana.close();
+                        }, 1); 
+                    });
+
+                </script>
+                @endsection

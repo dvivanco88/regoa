@@ -42,6 +42,11 @@ class Client extends Model
     {
         return $this->hasMany('App\OrderClient');
     }  
+
+    public function public_sales()
+    {
+        return $this->hasMany(PublicSale::class);
+    }  
     
 
     /**

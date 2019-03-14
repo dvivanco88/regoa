@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Order;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use App\Warehouse;
+use App\Inventory;
 use App\Order;
 use App\OrderClient;
 use App\Client;
+use App\PublicSale;
 use App\Product;
 use App\Stat;
 use Illuminate\Http\Request;
@@ -39,17 +41,17 @@ class OrdersController extends Controller
             ->latest()            
             ->paginate($perPage);
         } else {
-             $orders = Order::with('stat', 'order_clients')
-            ->join('stats', 'orders.stat_id', '=', 'stats.id')
-            ->join('order_clients', 'order_clients.order_id', '=', 'orders.id')
-            ->distinct('order.id')
-            ->select('orders.*', 'stats.name as state_name', 'order_clients.client_id as client')
-            ->latest()            
-            ->paginate($perPage);
-        }
+           $orders = Order::with('stat', 'order_clients')
+           ->join('stats', 'orders.stat_id', '=', 'stats.id')
+           ->join('order_clients', 'order_clients.order_id', '=', 'orders.id')
+           ->distinct('order.id')
+           ->select('orders.*', 'stats.name as state_name', 'order_clients.client_id as client')
+           ->latest()            
+           ->paginate($perPage);
+       }
 
-        return view('order.orders.index', compact('orders'));
-    }
+       return view('order.orders.index', compact('orders'));
+   }
 
     /**
      * Show the form for creating a new resource.
@@ -58,26 +60,69 @@ class OrdersController extends Controller
      */
     public function create()
     {
-       $order = null;
-       $stats = Stat::select('id', 'name')->where('is_active', '<>' , false)
-       ->orderBy('name', 'asc')->get();
+     $order = null;
+     $stats = Stat::select('id', 'name')->where('is_active', '<>' , false)
+     ->orderBy('name', 'asc')->get();
+
+     $public_sales_client = null;
+
+     $count_publicsales = PublicSale::count();
+     if($count_publicsales == 0){
+        $clients = Client::select('id', 'name')->where('is_active', '<>' , false)
+     ->orderBy('name', 'asc')->get();
+    }else{
+        $public_client = PublicSale::first(); 
+        $clients = Client::select('id', 'name')->where('is_active', '<>' , false)
+        ->where('id', '!=', $public_client->client_id)
+        ->orderBy('name', 'asc')->get();      
+ }
 
 
-       $clients = Client::select('id', 'name')->where('is_active', '<>' , false)
-       ->orderBy('name', 'asc')->get();
+ 
 
-       $products = Product::join('inventories', 'products.id', '=', 'inventories.product_id')
-       ->selectRaw("CONCAT(products.name, '   Disponibles: ', CONVERT(SUM(inventories.quantity) USING utf8)) as name, products.id as id")
-       ->where('inventories.quantity', '>=', 0)
-       ->groupBy('products.name', 'inventories.product_id')
-       ->orderBy('products.name', 'asc')->get();
+ $products = Product::join('inventories', 'products.id', '=', 'inventories.product_id')
+ ->selectRaw("CONCAT(products.name, '   Disponibles: ', CONVERT(SUM(inventories.quantity) USING utf8)) as name, products.id as id")
+ ->where('inventories.quantity', '>=', 0)
+ ->groupBy('products.name', 'inventories.product_id')
+ ->orderBy('products.name', 'asc')->get();
 
-       $stats = $stats->pluck('name', 'id');
-       $clients = $clients->pluck('name', 'id');
-       $products = $products->pluck('name', 'id');
+ $stats = $stats->pluck('name', 'id');
+ $clients = $clients->pluck('name', 'id');
+ $products = $products->pluck('name', 'id');
 
-       return view('order.orders.create', compact('order','stats','clients','products'));
-   }
+ return view('order.orders.create', compact('order','stats','clients','products', 'public_sales_client'));
+}
+
+public function venta_publico()
+{
+
+    $count_publicsales = PublicSale::count();
+    if($count_publicsales == 0){
+        return redirect('order/orders')->with('flash_message', 'No hay cliente vinculado como venta al público');
+    }
+
+    $public_sales_client = PublicSale::first();
+
+    $order = null;
+    $stats = Stat::select('id', 'name')->where('is_active', '<>' , false)
+    ->orderBy('name', 'asc')->get();
+
+
+    $clients = Client::select('id', 'name')->where('is_active', '<>' , false)
+    ->orderBy('name', 'asc')->get();
+
+    $products = Product::join('inventories', 'products.id', '=', 'inventories.product_id')
+    ->selectRaw("CONCAT(products.name, '   Disponibles: ', CONVERT(SUM(inventories.quantity) USING utf8)) as name, products.id as id")
+    ->where('inventories.quantity', '>=', 0)
+    ->groupBy('products.name', 'inventories.product_id')
+    ->orderBy('products.name', 'asc')->get();
+
+    $stats = $stats->pluck('name', 'id');
+    $clients = $clients->pluck('name', 'id');
+    $products = $products->pluck('name', 'id');
+
+    return view('order.orders.venta_publico', compact('order','stats','public_sales_client','products'));
+}
 
     /**
      * Store a newly created resource in storage.
@@ -88,35 +133,85 @@ class OrdersController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request);
+
 
         $this->validate($request, [
-         'stat_id' => 'required',
-         'date_delivery' => 'required',         
-         'cost' => 'required',
-         'type_pay' => 'required',         
-         'advance' => 'required',
-         'due' => 'required',
-         'client_id' => 'required',
-         'product_id' => 'required|array|not_in:0',
-         'quantity' => 'required|array|not_in:0'
-     ]);
+           'stat_id' => 'required',
+           'date_delivery' => 'required',         
+           'cost' => 'required',
+           'type_pay' => 'required',                    
+           'client_id' => 'required',
+           'product_id' => 'required|array|not_in:0',
+           'quantity' => 'required|array|not_in:0'
+       ]);
 
         $requestData = $request->all();
 
         $order = Order::create($requestData);
+        $resagado = 0;
+        $loop = false;
         
+
         foreach ($request['product_id'] as $key => $item){
             $product = Product::find((int)$item);
             $cost_product = ((int)$product->price_retail * (int)$request['quantity'][$key]);
             $order->order_clients()->create(['order_id'=>$order->id, 'product_id'=>$item, 'quantity'=>$request['quantity'][$key], 'cost'=>$cost_product, 'client_id'=>$request['client_id']]);
-        };
-        
-        
-        
 
-        return redirect('order/orders')->with('flash_message', 'Order added!');
+            $list_w = Warehouse::orderBy('priority', 'asc')->get();
+            foreach ($list_w as $w) {
+                $inventario = Inventory::where('warehouse_id', '=', $w->id)
+                ->where('product_id', '=', $item)->get();
+                foreach ($inventario as $i) {
+                    if($loop == false){
+                        $resagado = (int)$request['quantity'][$key];
+                        $loop = true;
+                    }
+
+                    $cantidad_wi = (int)$i->quantity;
+                    $cantidad_menos_resagado = $cantidad_wi - $resagado;
+                    
+                    if($cantidad_menos_resagado >= 0){
+                        $i->quantity = $cantidad_menos_resagado;
+                        $i->save();
+                        $resagado = 0;
+                    }else{
+                      $resagado = $resagado - $cantidad_wi;
+                      $i->quantity = 0;
+                      $i->save();
+                  }
+                  
+              };
+          };
+
+          if((int)$resagado > 0){
+
+            $ware_principal = Warehouse::orderBy('priority', 'asc')->first();
+            $inventario_principal = Inventory::where('warehouse_id', '=', $ware_principal->id)
+            ->where('product_id', '=', $product->id)->first();
+            if(empty($inventario_principal)){
+                $new_i = Inventory::create(['warehouse_id'=>$ware_principal->id, 'product_id'=>$product->id, 'quantity'=> (0 - (int)$resagado) , 'is_active'=> true]);
+            }else{
+                $inventario_principal->quantity =  $inventario_principal->quantity - $resagado;
+                $inventario_principal->save();
+            }
+        }
+    };
+
+
+
+    $public_sales_client = PublicSale::first();
+        //dd([(int)$public_sales_client->client_id, (int)$request['client_id']]);
+
+    if((int)$public_sales_client->client_id == (int)$request['client_id']){
+        $order->due = '0';
+        $order->advance = $order->cost;
+        $order->save();
+        return redirect('/ticket/index.php?order='.$order->id)->with('flash_message', 'Venta Finalizada, Imprimiendo Ticket!');    
+    }else{
+        return redirect('order/orders')->with('flash_message', 'Orden Agregada!');    
     }
+
+}
 
     /**
      * Display the specified resource.
@@ -132,7 +227,7 @@ class OrdersController extends Controller
         ->select('orders.*', 'order_clients.client_id')        
         ->findOrFail($id);
 
-               
+
         $client = Client::findOrFail($order->client_id);
 
         $products = Product::select('id', 'name')->where('is_active', '<>' , false)
@@ -163,6 +258,7 @@ class OrdersController extends Controller
         ->select('orders.*', 'order_clients.client_id')        
         ->findOrFail($id);
         
+        $public_sales_client = null;
         
         $stats = Stat::select('id', 'name')->where('is_active', '<>' , false)
         ->orderBy('name', 'asc')->get();
@@ -171,15 +267,15 @@ class OrdersController extends Controller
         ->orderBy('name', 'asc')->get();
 
         $products = Product::join('inventories', 'products.id', '=', 'inventories.product_id')
-       ->selectRaw("CONCAT(products.name, '   Disponibles: ', inventories.quantity) as name, products.id as id")
-       ->where('inventories.quantity', '>=', 0)
-       ->orderBy('products.name', 'asc')->get();
+        ->selectRaw("CONCAT(products.name, '   Disponibles: ', inventories.quantity) as name, products.id as id")
+        ->where('inventories.quantity', '>=', 0)
+        ->orderBy('products.name', 'asc')->get();
 
         $stats = $stats->pluck('name', 'id');
         $clients = $clients->pluck('name', 'id');
         $products = $products->pluck('name', 'id');
 
-        return view('order.orders.edit', compact('order','stats','clients','products'));
+        return view('order.orders.edit', compact('order','stats','clients','products', 'public_sales_client'));
     }
 
     /**
@@ -193,13 +289,13 @@ class OrdersController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-         'stat_id' => 'required',
-         'date_delivery' => 'required',
-         'cost' => 'required',
-         'type_pay' => 'required',
-         'advance' => 'required',
-         'due' => 'required'
-     ]);
+           'stat_id' => 'required',
+           'date_delivery' => 'required',
+           'cost' => 'required',
+           'type_pay' => 'required',
+           'advance' => 'required',
+           'due' => 'required'
+       ]);
         $requestData = $request->all();        
         $order = Order::findOrFail($id);
         $order->update($requestData);
@@ -213,7 +309,7 @@ class OrdersController extends Controller
             };
         }
 
-        return redirect('order/orders')->with('flash_message', 'Order updated!');
+        return redirect('order/orders')->with('flash_message', 'Orden Actualizada!');
     }
 
     /**
@@ -225,8 +321,9 @@ class OrdersController extends Controller
      */
     public function destroy($id)
     {
+        OrderClient::where('order_id', $id)->delete();
         Order::destroy($id);
 
-        return redirect('order/orders')->with('flash_message', 'Order deleted!');
+        return redirect('order/orders')->with('flash_message', 'Orden Eliminada!');
     }
 }

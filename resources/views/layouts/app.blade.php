@@ -17,10 +17,11 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
+        <nav class="navbar navbar-expand-md navbar-light navbar-laravel" style="background-color: #E74B4B; border-bottom: 3px solid #E4D133">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                <a class="navbar-brand" href="{{ url('/') }}" style="width:22%;">
+                    <!--{{ config('app.name', 'Laravel') }}-->
+                    <img src="{{ asset('img/redgold.png') }}" class="img-fluid">
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -36,11 +37,11 @@
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         @if(!Auth::check())
-                            <li><a class="nav-link" href="{{ url('/login') }}">Login</a></li>
-                            <li><a class="nav-link" href="{{ url('/register') }}">Register</a></li>
+                            <!--<li><a class="nav-link" href="{{ url('/login') }}" style="color:white;">Login</a></li>
+                            <li><a class="nav-link" href="{{ url('/register') }}" style="color:white;">Register</a></li>-->
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:white;">
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 

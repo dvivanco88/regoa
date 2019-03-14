@@ -41,7 +41,11 @@
 @section('scripts')
 
 <script type="text/javascript">
+    change_total();
     
+    $('.order_show').removeClass('d-none');
+
+
     $('#add_product').show();
         
     $('#add_product_edit').hide();

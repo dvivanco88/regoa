@@ -18,11 +18,19 @@
 </div>
     {!! $errors->first('is_active', '<p class="help-block">:message</p>') !!}
 </div>
+
+<div class="form-group{{ $errors->has('priority') ? 'has-error' : ''}}">
+    {!! Form::label('priority', 'Prioridad', ['class' => 'control-label']) !!}
+    {!! Form::number('priority', null, ['class' => 'form-control']) !!}
+    {!! $errors->first('priority', '<p class="help-block">:message</p>') !!}
+</div>
+
 <div class="form-group{{ $errors->has('quantity') ? 'has-error' : ''}}">
-    {!! Form::label('quantity', 'Quantity', ['class' => 'control-label']) !!}
+    {!! Form::label('quantity', 'Cantidad máxima de productos', ['class' => 'control-label']) !!}
     {!! Form::number('quantity', null, ['class' => 'form-control']) !!}
     {!! $errors->first('quantity', '<p class="help-block">:message</p>') !!}
 </div>
+
 
 
 <div class="form-group">

@@ -30,14 +30,20 @@
                             <table class="table table-borderless">
                                 <thead>
                                     <tr>
-                                        <th>#</th><th>Nombre</th><th>Descripción</th><th>Capacidad</th><th>Activo?</th><th>Acciones</th>
+                                        <th>#</th><th>Nombre</th><th>Descripción</th><th>Capacidad</th><th>Prioridad</th><th>Activo?</th><th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($warehouses as $item)
                                     <tr>
-                                        <td>{{ $loop->iteration or $item->id }}</td>
-                                        <td>{{ $item->name }}</td><td>{{ $item->description }}</td><td>{{ $item->quantity }}</td><td>{{ $item->is_active }}</td>
+                                        <td>{{ $item->id }}</td>
+                                        <td>{{ $item->name }}</td><td>{{ $item->description }}</td><td>{{ $item->quantity }}</td><td>{{ $item->priority }}</td><td>
+                                        @if($item->is_active == 1)
+                                        SI
+                                        @else
+                                        NO
+                                        @endif    
+                                        </td>
                                         
                                         <td>
                                             <a href="{{ url('/warehouse/warehouses/' . $item->id) }}" title="View Warehouse"><button class="btn btn-info btn-sm"><i class="fa fa-eye" aria-hidden="true"></i></button></a>

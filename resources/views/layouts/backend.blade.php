@@ -10,20 +10,27 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
+    <link href="{{ asset('/img/icon_redgold.png') }}" rel="shorcut icon">
+    <link href="{{ asset('/img/icon_redgold.png') }}" rel="apple-touch-icon">
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/fontawesome/css/all.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/tableexport.min.css') }}" rel="stylesheet">
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
     <link rel="stylesheet" href="{{ asset('js/chosen/chosen.css') }}">
-    
+    <script src="{{ asset('js/highcharts/code/highcharts.js') }}"></script>
+    <script src="{{ asset('js/highcharts/code/modules/exporting.js') }}"></script>
+    <script src="{{ asset('js/highcharts/code/modules/export-data.js') }}"></script>
+    <script src="{{ asset('js/highcharts/code/modules/no-data-to-display.js') }}"></script>
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
+        <nav class="navbar navbar-expand-md navbar-light navbar-laravel" style="background-color: #E74B4B; border-bottom: 3px solid #E4D133">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                <a class="navbar-brand" href="{{ url('/') }}" style="width:22%;">
+                    <!--{{ config('app.name', 'Laravel') }}-->
+                    <img src="{{ asset('img/redgold.png') }}" class="img-fluid">
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -31,19 +38,19 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto">
+                    <!--<ul class="navbar-nav mr-auto">
                         <li><a href="{{ url('/admin') }}">Dashboard <span class="sr-only">(current)</span></a></li>
-                    </ul>
+                    </ul>-->
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
                         @guest
-                        <li><a class="nav-link" href="{{ url('/login') }}">Login</a></li>
-                        <li><a class="nav-link" href="{{ url('/register') }}">Register</a></li>
+                        <li><a class="nav-link" href="{{ url('/login') }}" style="color:white;">Login</a></li>
+                        <li><a class="nav-link" href="{{ url('/register') }}" style="color:white;">Register</a></li>
                         @else
                         <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:white;">
                                 {{ Auth::user()->name }} <span class="caret"></span>
                             </a>
 
@@ -89,11 +96,17 @@
 
 <!-- Scripts -->
 
+ 
+
+
 <script src="{{ asset('js/chosen/docsupport/jquery-3.2.1.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/app.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/xlsx.core.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/FileSaver.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/tinymce.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/chosen/chosen.jquery.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/thisPrint/printThis.js') }}"  type="text/javascript"></script>
+<script src="{{ asset('js/tableexport.min.js') }}" type="text/javascript"></script>
 
 <script type="text/javascript">
     tinymce.init({
@@ -116,5 +129,6 @@
 </script>
 
 @yield('scripts')
+@yield('scripts2')
 </body>
 </html>

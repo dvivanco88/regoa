@@ -41,7 +41,7 @@
                                 <tbody>
                                 @foreach($clients as $item)
                                     <tr>
-                                        <td>{{ $loop->iteration or $item->id }}</td>
+                                        <td>{{ $item->id }}</td>
                                         <td>{{ $item->name }}</td><td>{{ $item->email }}</td><td>{{ $item->telephone1 }}</td><td>{{ $item->type_client->name }}</td>
                                         <td>                                            
                                             <a href="{{ url('/client/clients/' . $item->id) }}" title="View Client"><button class="btn btn-info btn-sm"><i class="fa fa-eye" aria-hidden="true"></i></button></a>

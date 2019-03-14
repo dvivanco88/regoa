@@ -31,7 +31,7 @@ class Warehouse extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'description', 'is_active', 'quantity'];
+    protected $fillable = ['name', 'description', 'is_active', 'quantity', 'priority'];
 
     public function inventories()
     {

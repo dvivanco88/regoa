@@ -37,7 +37,20 @@
                                     <tr>
                                         <th>ID</th><td>{{ $warehouse->id }}</td>
                                     </tr>
-                                    <tr><th> Nombre </th><td> {{ $warehouse->name }} </td></tr><tr><th> Descripción </th><td> {{ $warehouse->description }} </td></tr><tr><th> Activo? </th><td> {{ $warehouse->is_active }} </td><th> Capacidad </th><td> {{ $warehouse->quantity }} </td></tr>
+                                    <tr>
+                                        <th> Nombre </th>
+                                        <td> {{ $warehouse->name }} </td>
+                                    </tr>
+                                    <tr>
+                                        <th> Descripción </th>
+                                        <td> {{ $warehouse->description }} </td>
+                                    </tr>
+                                    <tr>
+                                        <th> Activo? </th>
+                                        <td> {{ $warehouse->is_active }} </td>
+                                        <th> Capacidad </th><td> {{ $warehouse->quantity }} </td>
+                                        <th> Prioridad </th><td> {{ $warehouse->priority }} </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

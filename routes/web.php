@@ -28,6 +28,16 @@ Route::middleware(['auth'])->group(function () {
 
 	Route::prefix('admin')->group(function () {
 		Route::get('/', 'Admin\AdminController@index');
+		Route::get('/tickets', 'Admin\AdminController@tickets');
+
+		Route::get('/pendientes_entregas', 'Admin\AdminController@pendientes_entregas');
+		Route::get('/ventas', 'Admin\AdminController@ventas');
+		Route::get('/ventas_publico', 'Admin\AdminController@ventas_publico');
+		Route::get('/inventario', 'Admin\AdminController@inventario');
+
+		Route::get('/abono/{id}', 'Admin\AdminController@abono');
+		Route::patch('/abono_set/{id}', 'Admin\AdminController@abono_set');
+
 		Route::resource('/roles', 'Admin\RolesController');
 		Route::resource('/permissions', 'Admin\PermissionsController');
 		Route::resource('/users', 'Admin\UsersController');
@@ -53,5 +63,12 @@ Route::middleware(['auth'])->group(function () {
 	
 
 	Route::resource('order/orders', 'Order\\OrdersController');
+
+	Route::get('order/venta_publico',['uses'=>'Order\\OrdersController@venta_publico']);
+
+	//Route::resource('public_sale/public-sales', 'PublicSale\\PublicSalesController');
+	Route::resource('public_sales/public-sales', 'PublicSale\\PublicSalesController');
 });
+
+
 

@@ -55,7 +55,8 @@ class WarehousesController extends Controller
         $this->validate($request, [
 			'name' => 'required',
 			'description' => 'required',
-			'is_active' => 'required'
+			'is_active' => 'required',
+            'priority' => 'required'
 		]);
         $requestData = $request->all();
         
