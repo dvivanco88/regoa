@@ -10500,3 +10500,8 @@ summary {
   outline: none;
 }
 
+#btn_no_stk:hover,
+#btn_stk:hover {
+  cursor: pointer;
+}
+

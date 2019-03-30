@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Role;
 use App\User;
+use App\LogWorkFlow;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -36,7 +38,7 @@ class UsersController extends Controller
     public function create()
     {
         $roles = Role::select('id', 'name', 'label')->where('name', '<>' , 'Todo')->get();
-        $roles = $roles->pluck('label', 'name');
+        $roles = $roles->where('label', '!=', 'Desarrollador')->pluck('label', 'name');
 
         return view('admin.users.create', compact('roles'));
     }
@@ -64,11 +66,19 @@ class UsersController extends Controller
         $data['password'] = bcrypt($request->password);
         $user = User::create($data);
 
-        foreach ($request->roles as $role) {
-            $user->assignRole($role);
-        }
+        
+        $user->assignRole($request->roles);
+        
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'CREAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $user->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $user->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
 
-        return redirect('admin/users')->with('flash_message', 'User added!');
+        return redirect('admin/users')->with('flash_message', 'Usuario Agregado!');
     }
 
     /**
@@ -95,7 +105,7 @@ class UsersController extends Controller
     public function edit($id)
     {
         $roles = Role::select('id', 'name', 'label')->get();
-        $roles = $roles->pluck('label', 'name');
+        $roles = $roles->where('label', '!=', 'Desarrollador')->pluck('label', 'name');
 
         $user = User::with('roles')->select('id', 'name', 'email', 'is_active')->findOrFail($id);
         $user_roles = [];
@@ -126,19 +136,32 @@ class UsersController extends Controller
         );
 
         $data = $request->except('password');
-        if ($request->has('password')) {
+        
+        //if ($request->has('password')) {
+            if ($request->password != null) {            
             $data['password'] = bcrypt($request->password);
         }
 
         $user = User::findOrFail($id);
+        $record_temp = User::find($id);
         $user->update($data);
-
+        
         $user->roles()->detach();
-        foreach ($request->roles as $role) {
-            $user->assignRole($role);
-        }
+        
+        $user->assignRole($request->roles);
+        
 
-        return redirect('admin/users')->with('flash_message', 'User updated!');
+$lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ACTUALIZAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $user->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $user->toJson(JSON_PRETTY_PRINT);
+        $lwf->info2 = $record_temp->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
+
+        return redirect('admin/users')->with('flash_message', 'Usuario Actualizado!');
     }
 
     /**
@@ -150,8 +173,19 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
+        $record_temp = User::find($id);
+
         User::destroy($id);
 
-        return redirect('admin/users')->with('flash_message', 'User deleted!');
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ELIMINAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $record_temp->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $record_temp->toJson(JSON_PRETTY_PRINT);        
+        $lwf->save();
+
+        return redirect('admin/users')->with('flash_message', 'Usuario Eliminado!');
     }
 }

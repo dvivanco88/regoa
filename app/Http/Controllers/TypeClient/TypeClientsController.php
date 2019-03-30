@@ -6,6 +6,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\TypeClient;
+use App\LogWorkFlow;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 class TypeClientsController extends Controller
@@ -22,9 +24,9 @@ class TypeClientsController extends Controller
 
         if (!empty($keyword)) {
             $typeclients = TypeClient::where('name', 'LIKE', "%$keyword%")
-                ->orWhere('description', 'LIKE', "%$keyword%")
-                ->orWhere('is_active', 'LIKE', "%$keyword%")
-                ->latest()->paginate($perPage);
+            ->orWhere('description', 'LIKE', "%$keyword%")
+            ->orWhere('is_active', 'LIKE', "%$keyword%")
+            ->latest()->paginate($perPage);
         } else {
             $typeclients = TypeClient::latest()->paginate($perPage);
         }
@@ -52,13 +54,22 @@ class TypeClientsController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-			'name' => 'required',
-			'description' => 'required',
-			'is_active' => 'required'
-		]);
+         'name' => 'required',
+         'description' => 'required',
+         'is_active' => 'required'
+     ]);
         $requestData = $request->all();
         
-        TypeClient::create($requestData);
+        $tipo_c = TypeClient::create($requestData);
+
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'CREAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $tipo_c->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $tipo_c->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
 
         return redirect('type_client/type-clients')->with('flash_message', 'TypeClient added!');
     }
@@ -102,14 +113,26 @@ class TypeClientsController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-			'name' => 'required',
-			'description' => 'required',
-			'is_active' => 'required'
-		]);
+         'name' => 'required',
+         'description' => 'required',
+         'is_active' => 'required'
+     ]);
         $requestData = $request->all();
         
         $typeclient = TypeClient::findOrFail($id);
+        $record_temp = TypeClient::find($id);
         $typeclient->update($requestData);
+
+
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ACTUALIZAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $typeclient->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $typeclient->toJson(JSON_PRETTY_PRINT);
+        $lwf->info2 = $record_temp->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
 
         return redirect('type_client/type-clients')->with('flash_message', 'TypeClient updated!');
     }
@@ -123,7 +146,18 @@ class TypeClientsController extends Controller
      */
     public function destroy($id)
     {
+        $record_temp = TypeClient::find($id);
+
         TypeClient::destroy($id);
+        
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ELIMINAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $record_temp->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $record_temp->toJson(JSON_PRETTY_PRINT);        
+        $lwf->save();
 
         return redirect('type_client/type-clients')->with('flash_message', 'TypeClient deleted!');
     }

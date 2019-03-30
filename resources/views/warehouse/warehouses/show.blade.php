@@ -10,8 +10,10 @@
                     <div class="card-header">Warehouse {{ $warehouse->id }}</div>
                     <div class="card-body">
 
-                        <a href="{{ url('/warehouse/warehouses') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
-                        <a href="{{ url('/warehouse/warehouses/' . $warehouse->id . '/edit') }}" title="Edit Warehouse"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button></a>
+                        <a href="{{ url('/warehouse/warehouses') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                        @if (Auth::user()->hasRole('Todo') || Auth::user()->hasRole('Admin'))
+                        <a href="{{ url('/warehouse/warehouses/' . $warehouse->id . '/edit') }}" title="Editar Almacen"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button></a>
+                        @endif
                         {!! Form::open([
                             'method'=>'DELETE',
                             'url' => ['warehouse/warehouses', $warehouse->id],
@@ -22,7 +24,7 @@
                             {!! Form::button('<i class="fas fa-trash-alt"></i> Eliminar', array(
                                     'type' => 'submit',
                                     'class' => 'btn btn-danger btn-sm',
-                                    'title' => 'Delete Warehouse',
+                                    'title' => 'Eliminar Almacen',
                                     'onclick'=>'return confirm("Confirm delete?")'
                             ))!!}
                         {!! Form::close() !!}

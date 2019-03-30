@@ -31,7 +31,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'is_active', 'price_business', 'price_wholesale', 'price_retail'];
+    protected $fillable = ['name', 'is_active', 'price_business', 'price_wholesale', 'price_retail', 'code_bar'];
 
     
     public function inventories()

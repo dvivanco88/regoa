@@ -6,6 +6,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Product;
+use App\LogWorkFlow;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -69,11 +71,21 @@ class ProductsController extends Controller
 			'is_active' => 'required',
             'price_business' => 'required',
             'price_wholesale' => 'required',
-            'price_retail' => 'required'
+            'price_retail' => 'required',
+            'code_bar' => 'unique:products|nullable'
 		]);
         $requestData = $request->all();
         
-        Product::create($requestData);
+        $producto = Product::create($requestData);
+
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'CREAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $producto->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $producto->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
 
         return redirect('product/products')->with('flash_message', 'Producto agregado!');
     }
@@ -121,12 +133,25 @@ class ProductsController extends Controller
             'is_active' => 'required',
             'price_business' => 'required',
             'price_wholesale' => 'required',
-            'price_retail' => 'required'
+            'price_retail' => 'required',
+            'code_bar' => 'unique:products|nullable'
         ]);
         $requestData = $request->all();
         
         $product = Product::findOrFail($id);
+        $record_temp = Product::find($id);
         $product->update($requestData);
+
+
+$lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ACTUALIZAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $product->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $product->toJson(JSON_PRETTY_PRINT);
+        $lwf->info2 = $record_temp->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
 
         return redirect('product/products')->with('flash_message', 'Producto actualizado!');
     }
@@ -140,7 +165,18 @@ class ProductsController extends Controller
      */
     public function destroy($id)
     {
+        $record_temp = Product::find($id);
         Product::destroy($id);
+
+        
+$lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ELIMINAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $record_temp->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $record_temp->toJson(JSON_PRETTY_PRINT);        
+        $lwf->save();
 
         return redirect('product/products')->with('flash_message', 'Producto eliminado!');
     }

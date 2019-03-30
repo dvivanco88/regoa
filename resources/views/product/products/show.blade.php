@@ -10,8 +10,12 @@
                     <div class="card-header">Producto {{ $product->id }}</div>
                     <div class="card-body">
 
-                        <a href="{{ url('/product/products') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
-                        <a href="{{ url('/product/products/' . $product->id . '/edit') }}" title="Edit Product"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button></a>
+                        <a href="{{ url('/product/products') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                        
+                        @if (Auth::user()->hasRole('Todo') || Auth::user()->hasRole('Admin'))
+                        <a href="{{ url('/product/products/' . $product->id . '/edit') }}" title="Editar Producto"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button>
+                        </a>
+                        @endif
                         
                         @if (Auth::user()->hasRole('Todo'))
                         {!! Form::open([
@@ -22,7 +26,7 @@
                             {!! Form::button('<i class="fas fa-trash-alt"></i> Eliminar', array(
                                     'type' => 'submit',
                                     'class' => 'btn btn-danger btn-sm',
-                                    'title' => 'Delete Product',
+                                    'title' => 'Eliminar Producto',
                                     'onclick'=>'return confirm("Confirm delete?")'
                             ))!!}
                         {!! Form::close() !!}
@@ -52,6 +56,10 @@
                                     <tr>
                                         <th> Venta Mayoreo </th>
                                         <td> ${{ $product->price_retail }} </td>
+                                    </tr>
+                                    <tr>
+                                        <th> Código de Barras </th>
+                                        <td> {{ $product->code_bar }} </td>
                                     </tr>
                                     <tr>
                                         <th> Activo? </th>

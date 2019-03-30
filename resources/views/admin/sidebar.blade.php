@@ -2,12 +2,23 @@
     
     @if(Auth::user()->hasRole('Todo'))
     <?php 
+    unset($laravelAdminMenus->menus[4]); 
+    unset($laravelAdminMenus->menus[5]); 
     $laravelAdminMenus->menus = $laravelAdminMenus->menus
     ?>
-    @else
+    @elseif(Auth::user()->hasRole('Admin'))
     <?php 
     unset($laravelAdminMenus->menus[2]); 
     unset($laravelAdminMenus->menus[3]); 
+    unset($laravelAdminMenus->menus[4]); 
+    unset($laravelAdminMenus->menus[5]);
+    ?>
+    @else
+    <?php 
+    unset($laravelAdminMenus->menus[0]); 
+    unset($laravelAdminMenus->menus[1]); 
+    unset($laravelAdminMenus->menus[2]); 
+    unset($laravelAdminMenus->menus[3]);
     ?>
     @endif
 

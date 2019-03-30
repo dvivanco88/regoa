@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-header">Editar Producto #{{ $product->id }}</div>
                     <div class="card-body">
-                        <a href="{{ url('/product/products') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                        <a href="{{ url('/product/products') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
                         <br />
                         <br />
 

@@ -7,11 +7,13 @@
 
         <div class="col-md-10">
             <div class="card">
-                <div class="card-header">Order {{ $order->id }}</div>
+                <div class="card-header">Orden #: {{ $order->id }}</div>
                 <div class="card-body">
 
-                    <a href="{{ url('/order/orders') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
-                    <a href="{{ url('/order/orders/' . $order->id . '/edit') }}" title="Edit Order"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button></a>
+                    <a href="{{ url('/order/orders') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                    
+                    <a href="{{ url('/order/orders/' . $order->id . '/edit') }}" title="Editar Orden"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button></a>
+                    
                     {!! Form::open([
                         'method'=>'DELETE',
                         'url' => ['order/orders', $order->id],
@@ -22,7 +24,7 @@
                         {!! Form::button('<i class="fas fa-trash-alt"></i> Eliminar', array(
                             'type' => 'submit',
                             'class' => 'btn btn-danger btn-sm',
-                            'title' => 'Delete Order',
+                            'title' => 'Eliminar Orden',
                             'onclick'=>'return confirm("Confirm delete?")'
                             ))!!}
                             {!! Form::close() !!}
@@ -35,7 +37,10 @@
 
                             <a id="print_ticket" href="#" class="btn btn-secondary" style="margin-bottom: 10px;">Imprimir Ticket</a>
 
-                            <div class="table-responsive print-order">
+                            <div class="print-order">
+                            <img src="{{ asset('img/redgold.png') }}" class="img mx-auto d-block" style="width: 30%; height: auto; margin-bottom: 5%;">
+
+                            <div class="table-responsive ">
 
 
                                 <table class="table">
@@ -100,38 +105,42 @@
                                                 </td>
                                             </tr>
                                             <tr style="background-color: #E2E2E2;">
-                                                <td> Anticipo: $ {{ $order->advance }}</td>      
-                                                <td> Adeudo: $ {{ $order->due }}</td>
-                                                <th> Total: $ {{ $order->cost }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="3">Observaciones: {{ $order->observations }}</td>                                            
-                                                </tr>
+                                                <td> Anticipo: $ {{ $order->advance }} <br> Descuento: $ {{ $order->discount }}</td>       
+                                                <td style="color:  <?php if((int)$order->due > 0):?>  red <?php else: ?> green  <?php endif ?>; font-weight: bold;"> Adeudo: $ {{ $order->due }}</td>
+                                                <th> Total: $ {{ $order->cost }}</th>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">Vendedor: {{ $order->user->name }}</td>
+                                           </tr>
+                                           <tr>
+                                            <td colspan="3">Observaciones: {{ $order->observations }}</td>                                            
+                                        </tr>
 
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                </div>
+                                    </tbody>
+                                </table>
                             </div>
+
+                        </div>
                         </div>
                     </div>
                 </div>
-                @endsection
+            </div>
+        </div>
+        @endsection
 
-                @section('scripts')
-                <script type="text/javascript">
+        @section('scripts')
+        <script type="text/javascript">
 
-                    $("#btn_print").click(function() {
-                      $('.print-order').printThis();
-                  });
+            $("#btn_print").click(function() {
+              $('.print-order').printThis();
+          });
 
-                    document.getElementById("print_ticket").addEventListener("click", function(){
-                        const ventana = window.open("/ticket/index.php?order={{ $order->id }}","_blank");
-                        setTimeout(function(){
-                            ventana.close();
-                        }, 1); 
-                    });
+            document.getElementById("print_ticket").addEventListener("click", function(){
+                const ventana = window.open("/ticket/index.php?order={{ $order->id }}","_blank");
+                setTimeout(function(){
+                    ventana.close();
+                }, 1); 
+            });
 
-                </script>
-                @endsection
+        </script>
+        @endsection

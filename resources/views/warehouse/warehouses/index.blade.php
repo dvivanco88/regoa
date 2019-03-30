@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-header">Almacenes</div>
                     <div class="card-body">
-                        <a href="{{ url('/warehouse/warehouses/create') }}" class="btn btn-success btn-sm" title="Add New Warehouse">
+                        <a href="{{ url('/warehouse/warehouses/create') }}" class="btn btn-success btn-sm" title="Agregar nuevo almacen">
                             <i class="fa fa-plus" aria-hidden="true"></i> Agregar
                         </a>
 
@@ -46,8 +46,8 @@
                                         </td>
                                         
                                         <td>
-                                            <a href="{{ url('/warehouse/warehouses/' . $item->id) }}" title="View Warehouse"><button class="btn btn-info btn-sm"><i class="fa fa-eye" aria-hidden="true"></i></button></a>
-                                            <a href="{{ url('/warehouse/warehouses/' . $item->id . '/edit') }}" title="Edit Warehouse"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i></button></a>
+                                            <a href="{{ url('/warehouse/warehouses/' . $item->id) }}" title="Ver Almacen"><button class="btn btn-info btn-sm"><i class="fa fa-eye" aria-hidden="true"></i></button></a>
+                                            <a href="{{ url('/warehouse/warehouses/' . $item->id . '/edit') }}" title="Editar Almacen"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i></button></a>
 
                                             @if (Auth::user()->hasRole('Todo'))
                                             {!! Form::open([
@@ -58,7 +58,7 @@
                                                 {!! Form::button('<i class="fas fa-trash-alt"></i>', array(
                                                         'type' => 'submit',
                                                         'class' => 'btn btn-danger btn-sm',
-                                                        'title' => 'Delete Warehouse',
+                                                        'title' => 'Eliminar Almacen',
                                                         'onclick'=>'return confirm("Confirm delete?")'
                                                 )) !!}
                                             {!! Form::close() !!}

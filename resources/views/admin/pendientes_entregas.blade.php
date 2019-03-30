@@ -7,13 +7,15 @@
 
  		<div class="col-md-10">
  			<div class="card">
- 				<div class="card-header">Dashboard</div>
+ 				<div class="card-header"><img src="{{ asset('img/redgold.png') }}" class="img d-block" style="width: 15%; height: auto;"></div>
 
  				<div class="card-body">                       
  					<a  href="{{ url('admin') }}"> <span class="badge badge-danger"> Cobranza </span> </a>  
  					<a  href="{{ url('admin/pendientes_entregas') }}"> <span class="badge badge-warning"> Pendientes de Entrega </span> </a>  
+ 					@if (Auth::user()->hasRole('Todo') || Auth::user()->hasRole('Admin'))
  					<a  href="{{ url('admin/ventas') }}"> <span class="badge badge-primary"> Ventas </span> </a>  
  					 <a  href="{{ url('admin/inventario') }}"> <span class="badge badge-success"> Inventario </span> </a>
+ 					 @endif
  					<h2 align="center">Entregas</h2>
  					<div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>  
 
@@ -25,6 +27,7 @@
  								<th>Fecha Compromiso</th>
  								<th>Artículos</th>
  								<th>Costo de Orden</th>
+ 								<th>Vendedor</th>
  							</tr>
  						
  						<tbody>
@@ -34,7 +37,8 @@
  								<td>{{ $detail->name }}</td>
  								<td>{{ $detail->date_delivery }}</td>
  								<td>{{ $detail->articles }}</td>
- 								<td>$ {{ $detail->due }}</td> 								
+ 								<td style="color:  <?php if((int)$detail->due > 0):?>  red <?php else: ?> green  <?php endif ?>; font-weight: bold;">$ {{ $detail->due }}</td> 								
+ 								<td>{{ $detail->seller }}</td> 								
  							</tr>
  							@endforeach
  						</tbody>

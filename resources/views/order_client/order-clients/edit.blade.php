@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-header">Editar OrderClient #{{ $orderclient->id }}</div>
                     <div class="card-body">
-                        <a href="{{ url('/order_client/order-clients') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                        <a href="{{ url('/order_client/order-clients') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
                         <br />
                         <br />
 

@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header">Editar Inventario #{{ $inventory->id }}</div>
                 <div class="card-body">
-                    <a href="{{ url('/inventory/inventories') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                    <a href="{{ url('/inventory/inventories') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
                     <br />
                     <br />
 

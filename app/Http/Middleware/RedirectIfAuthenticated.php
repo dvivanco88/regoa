@@ -19,7 +19,12 @@ class RedirectIfAuthenticated
     {
         if (Auth::guard($guard)->check()) {
             //return redirect('/home');
-            return redirect('/admin');
+            if(Auth::user()->hasRole('Todo') || Auth::user()->hasRole('Admin')){
+                return redirect('/admin');    
+            }else{
+                return redirect('/order/venta_publico');    
+            }
+            
             //return redirect('/admin');
         }
 

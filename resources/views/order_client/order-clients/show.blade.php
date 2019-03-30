@@ -10,7 +10,7 @@
                     <div class="card-header">OrderClient {{ $orderclient->id }}</div>
                     <div class="card-body">
 
-                        <a href="{{ url('/order_client/order-clients') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                        <a href="{{ url('/order_client/order-clients') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
                         <a href="{{ url('/order_client/order-clients/' . $orderclient->id . '/edit') }}" title="Edit OrderClient"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button></a>
                         {!! Form::open([
                             'method'=>'DELETE',

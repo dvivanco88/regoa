@@ -10,8 +10,13 @@
                     <div class="card-header">Usuario</div>
                     <div class="card-body">
 
-                        <a href="{{ url('/admin/users') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                        <a href="{{ url('/admin/users') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+
+                        @if($user->roles()->first()->label != "Desarrollador" )
                         <a href="{{ url('/admin/users/' . $user->id . '/edit') }}" title="Edit User"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button></a>
+                         @elseif(Auth::user()->hasRole('Todo'))
+                         <a href="{{ url('/admin/users/' . $user->id . '/edit') }}" title="Edit User"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button></a>
+                         @endif
                         
                         @if(Auth::user()->hasRole('Todo'))
                         {!! Form::open([

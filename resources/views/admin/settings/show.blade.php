@@ -10,7 +10,7 @@
                     <div class="card-header">Setting</div>
                     <div class="card-body">
 
-                        <a href="{{ url('/admin/settings') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button></a>
+                        <a href="{{ url('/admin/settings') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button></a>
                         <a href="{{ url('/admin/settings/' . $setting->id . '/edit') }}" title="Edit Setting"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Edit</button></a>
                         {!! Form::open([
                             'method'=>'DELETE',

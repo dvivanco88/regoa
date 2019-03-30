@@ -10,7 +10,7 @@
                     <div class="card-header">PublicSale {{ $publicsale->id }}</div>
                     <div class="card-body">
 
-                        <a href="{{ url('/public_sales/public-sales') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                        <a href="{{ url('/public_sales/public-sales') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
                         <a href="{{ url('/public_sales/public-sales/' . $publicsale->id . '/edit') }}" title="Edit PublicSale"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button></a>
                         {!! Form::open([
                             'method'=>'DELETE',

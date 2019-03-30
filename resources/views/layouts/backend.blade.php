@@ -19,10 +19,7 @@
     <link href="{{ asset('css/tableexport.min.css') }}" rel="stylesheet">
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
     <link rel="stylesheet" href="{{ asset('js/chosen/chosen.css') }}">
-    <script src="{{ asset('js/highcharts/code/highcharts.js') }}"></script>
-    <script src="{{ asset('js/highcharts/code/modules/exporting.js') }}"></script>
-    <script src="{{ asset('js/highcharts/code/modules/export-data.js') }}"></script>
-    <script src="{{ asset('js/highcharts/code/modules/no-data-to-display.js') }}"></script>
+
 </head>
 <body>
     <div id="app">
@@ -81,6 +78,14 @@
             </div>
         </div>
         @endif
+         @if (Session::has('flash_message_error'))
+        <div class="container">
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                {{ Session::get('flash_message_error') }}
+            </div>
+        </div>
+        @endif
 
         @yield('content')
     </main>
@@ -101,12 +106,19 @@
 
 <script src="{{ asset('js/chosen/docsupport/jquery-3.2.1.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/app.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/highcharts/code/highcharts.js') }}"></script>
+    <script src="{{ asset('js/highcharts/code/modules/exporting.js') }}"></script>
+    <script src="{{ asset('js/highcharts/code/modules/export-data.js') }}"></script>
+    <script src="{{ asset('js/highcharts/code/modules/no-data-to-display.js') }}"></script>
 <script src="{{ asset('js/xlsx.core.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/FileSaver.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('js/tinymce.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/tinymce/tinymce.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/chosen/chosen.jquery.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/thisPrint/printThis.js') }}"  type="text/javascript"></script>
 <script src="{{ asset('js/tableexport.min.js') }}" type="text/javascript"></script>
+
+ 
+    
 
 <script type="text/javascript">
     tinymce.init({

@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-header">Tipo de Clientes</div>
                     <div class="card-body">
-                        <a href="{{ url('/type_client/type-clients/create') }}" class="btn btn-success btn-sm" title="Add New TypeClient">
+                        <a href="{{ url('/type_client/type-clients/create') }}" class="btn btn-success btn-sm" title="Agregar nuevo tipo de ciente">
                             <i class="fa fa-plus" aria-hidden="true"></i> Agregar
                         </a>
 
@@ -43,8 +43,8 @@
                                             NO
                                         @endif</td>
                                         <td>
-                                            <a href="{{ url('/type_client/type-clients/' . $item->id) }}" title="View TypeClient"><button class="btn btn-info btn-sm"><i class="fa fa-eye" aria-hidden="true"></i></button></a>
-                                            <a href="{{ url('/type_client/type-clients/' . $item->id . '/edit') }}" title="Edit TypeClient"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i></button></a>
+                                            <a href="{{ url('/type_client/type-clients/' . $item->id) }}" title="Ver Tipo de Cliente"><button class="btn btn-info btn-sm"><i class="fa fa-eye" aria-hidden="true"></i></button></a>
+                                            <a href="{{ url('/type_client/type-clients/' . $item->id . '/edit') }}" title="Editar Tipo de Cliente"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i></button></a>
 
                                             @if (Auth::user()->hasRole('Todo'))
                                             {!! Form::open([
@@ -55,7 +55,7 @@
                                                 {!! Form::button('<i class="fas fa-trash-alt"></i>', array(
                                                         'type' => 'submit',
                                                         'class' => 'btn btn-danger btn-sm',
-                                                        'title' => 'Delete TypeClient',
+                                                        'title' => 'Eliminar Tipo de Cliente',
                                                         'onclick'=>'return confirm("Confirm delete?")'
                                                 )) !!}
                                             {!! Form::close() !!}

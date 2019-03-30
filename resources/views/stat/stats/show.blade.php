@@ -10,8 +10,8 @@
                     <div class="card-header">Estado {{ $stat->id }}</div>
                     <div class="card-body">
 
-                        <a href="{{ url('/stat/stats') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
-                        <a href="{{ url('/stat/stats/' . $stat->id . '/edit') }}" title="Edit Stat"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button></a>
+                        <a href="{{ url('/stat/stats') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                        <a href="{{ url('/stat/stats/' . $stat->id . '/edit') }}" title="Editar Estado"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i> Editar</button></a>
 
                         @if (Auth::user()->hasRole('Todo'))
                         {!! Form::open([
@@ -22,7 +22,7 @@
                             {!! Form::button('<i class="fas fa-trash-alt"></i> Eliminar', array(
                                     'type' => 'submit',
                                     'class' => 'btn btn-danger btn-sm',
-                                    'title' => 'Delete Stat',
+                                    'title' => 'Eliminar Estado',
                                     'onclick'=>'return confirm("Confirm delete?")'
                             ))!!}
                         {!! Form::close() !!}

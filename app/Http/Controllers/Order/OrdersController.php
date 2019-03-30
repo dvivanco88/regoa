@@ -12,6 +12,9 @@ use App\Client;
 use App\PublicSale;
 use App\Product;
 use App\Stat;
+use App\User;
+use App\LogWorkFlow;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 class OrdersController extends Controller
@@ -26,32 +29,87 @@ class OrdersController extends Controller
         $keyword = $request->get('search');
         $perPage = 25;
 
+
         if (!empty($keyword)) {
-            $orders = Order::with('stat', 'order_clients')
+            $orders = Order::with('stat', 'order_clients', 'user')
             ->join('stats', 'orders.stat_id', '=', 'stats.id')
             ->join('order_clients', 'order_clients.order_id', '=', 'orders.id')    
             ->join('clients', 'order_clients.client_id', '=', 'clients.id')        
-            ->orWhere('date_delivery', 'LIKE', "%$keyword%")
+            ->join('users', 'orders.user_id', '=', 'users.id')
+            ->where('date_delivery', 'LIKE', "%$keyword%")
             ->orWhere('date_delivery', 'LIKE', "%$keyword%")
             ->orWhere('clients.name', 'LIKE', "%$keyword%")
+            ->orWhere('users.name', 'LIKE', "%$keyword%")
             ->orWhere('due', 'LIKE', "%$keyword%")
-            ->orWhere('stats.name', 'LIKE', "%$keyword%")
-            ->distinct('order.id')            
-            ->select('orders.*', 'stats.name as state_name', 'order_clients.client_id as client')
-            ->latest()            
-            ->paginate($perPage);
+            ->orWhere('stats.name', 'LIKE', "%$keyword%");
+            
         } else {
-           $orders = Order::with('stat', 'order_clients')
+           $orders = Order::with('stat', 'order_clients', 'user')
            ->join('stats', 'orders.stat_id', '=', 'stats.id')
            ->join('order_clients', 'order_clients.order_id', '=', 'orders.id')
-           ->distinct('order.id')
-           ->select('orders.*', 'stats.name as state_name', 'order_clients.client_id as client')
-           ->latest()            
-           ->paginate($perPage);
+           ->join('users', 'orders.user_id', '=', 'users.id');
+
        }
 
-       return view('order.orders.index', compact('orders'));
-   }
+       if (auth()->user()->roles[0]->name == 'Todo' || auth()->user()->roles[0]->name == 'Admin'){
+         $orders= $orders->distinct('order.id')            
+         ->select('orders.*', 'stats.name as state_name', 'order_clients.client_id as client')
+         ->latest()            
+         ->paginate($perPage);
+
+
+     }else{
+        $orders= $orders->where('orders.user_id', '=', auth()->user()->id)
+        ->distinct('order.id')
+        ->select('orders.*', 'stats.name as state_name', 'order_clients.client_id as client')
+        ->latest()            
+        ->paginate($perPage);}
+
+        return view('order.orders.index', compact('orders'));
+    }
+
+    public function reportecompleto(Request $request)
+    {
+        $keyword = $request->get('search');
+
+        if (!empty($keyword)) {
+            $orders = Order::with('stat', 'order_clients', 'user')
+            ->join('stats', 'orders.stat_id', '=', 'stats.id')
+            ->join('order_clients', 'order_clients.order_id', '=', 'orders.id')    
+            ->join('clients', 'order_clients.client_id', '=', 'clients.id')        
+            ->join('users', 'orders.user_id', '=', 'users.id')
+            ->where('date_delivery', 'LIKE', "%$keyword%")
+            ->orWhere('date_delivery', 'BETWEEN', "%$keyword%")
+            ->orWhere('clients.name', 'LIKE', "%$keyword%")
+            ->orWhere('users.name', 'LIKE', "%$keyword%")
+            ->orWhere('due', 'LIKE', "%$keyword%")
+            ->orWhere('stats.name', 'LIKE', "%$keyword%");
+
+        } else {
+           $orders = Order::with('stat', 'order_clients', 'user')
+           ->join('stats', 'orders.stat_id', '=', 'stats.id')
+           ->join('order_clients', 'order_clients.order_id', '=', 'orders.id')
+           ->join('users', 'orders.user_id', '=', 'users.id');
+
+       }
+
+       if (auth()->user()->roles[0]->name == 'Todo' || auth()->user()->roles[0]->name == 'Admin'){
+         $orders= $orders->distinct('order.id')            
+         ->select('orders.*', 'stats.name as state_name', 'order_clients.client_id as client')
+         ->latest()            
+         ->paginate($perPage);
+
+
+     }else{
+        $orders= $orders->where('orders.user_id', '=', auth()->user()->id)
+        ->distinct('order.id')
+        ->select('orders.*', 'stats.name as state_name', 'order_clients.client_id as client')
+        ->latest()            
+        ->paginate($perPage);}
+
+        return view('order.orders.index', compact('orders'));
+
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -69,28 +127,28 @@ class OrdersController extends Controller
      $count_publicsales = PublicSale::count();
      if($count_publicsales == 0){
         $clients = Client::select('id', 'name')->where('is_active', '<>' , false)
-     ->orderBy('name', 'asc')->get();
+        ->orderBy('name', 'asc')->get();
     }else{
         $public_client = PublicSale::first(); 
         $clients = Client::select('id', 'name')->where('is_active', '<>' , false)
         ->where('id', '!=', $public_client->client_id)
         ->orderBy('name', 'asc')->get();      
- }
+    }
 
 
- 
 
- $products = Product::join('inventories', 'products.id', '=', 'inventories.product_id')
- ->selectRaw("CONCAT(products.name, '   Disponibles: ', CONVERT(SUM(inventories.quantity) USING utf8)) as name, products.id as id")
- ->where('inventories.quantity', '>=', 0)
- ->groupBy('products.name', 'inventories.product_id')
- ->orderBy('products.name', 'asc')->get();
 
- $stats = $stats->pluck('name', 'id');
- $clients = $clients->pluck('name', 'id');
- $products = $products->pluck('name', 'id');
+    $products = Product::join('inventories', 'products.id', '=', 'inventories.product_id')
+    ->selectRaw("CONCAT(products.name, '   Disponibles: ', CONVERT(SUM(inventories.quantity) USING utf8)) as name, products.id as id")
+    ->where('inventories.quantity', '>', 0)
+    ->groupBy('products.name', 'inventories.product_id')
+    ->orderBy('products.name', 'asc')->get();
 
- return view('order.orders.create', compact('order','stats','clients','products', 'public_sales_client'));
+    $stats = $stats->pluck('name', 'id');
+    $clients = $clients->pluck('name', 'id');
+    $products = $products->pluck('name', 'id');
+
+    return view('order.orders.create', compact('order','stats','clients','products', 'public_sales_client'));
 }
 
 public function venta_publico()
@@ -113,7 +171,7 @@ public function venta_publico()
 
     $products = Product::join('inventories', 'products.id', '=', 'inventories.product_id')
     ->selectRaw("CONCAT(products.name, '   Disponibles: ', CONVERT(SUM(inventories.quantity) USING utf8)) as name, products.id as id")
-    ->where('inventories.quantity', '>=', 0)
+    ->where('inventories.quantity', '>', 0)
     ->groupBy('products.name', 'inventories.product_id')
     ->orderBy('products.name', 'asc')->get();
 
@@ -142,12 +200,14 @@ public function venta_publico()
            'type_pay' => 'required',                    
            'client_id' => 'required',
            'product_id' => 'required|array|not_in:0',
-           'quantity' => 'required|array|not_in:0'
+           'quantity' => 'required|array|not_in:0'           
        ]);
 
         $requestData = $request->all();
 
         $order = Order::create($requestData);
+        $order->user_id = auth()->user()->id;
+        $order->save();
         $resagado = 0;
         $loop = false;
         
@@ -201,13 +261,26 @@ public function venta_publico()
 
     $public_sales_client = PublicSale::first();
         //dd([(int)$public_sales_client->client_id, (int)$request['client_id']]);
+    $lwf = new LogWorkFlow;
+    $lwf->controller_name = Route::current()->action['controller'];
+    $lwf->action = 'CREAR';
+    $lwf->page = Route::current()->uri;
+    $lwf->register_id = $order->id;
+    $lwf->user_id = auth()->user()->id;
+    $lwf->info1 = $order->toJson(JSON_PRETTY_PRINT);
+
 
     if((int)$public_sales_client->client_id == (int)$request['client_id']){
         $order->due = '0';
         $order->advance = $order->cost;
         $order->save();
+
+        $lwf->info1 = $order->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
         return redirect('/ticket/index.php?order='.$order->id)->with('flash_message', 'Venta Finalizada, Imprimiendo Ticket!');    
     }else{
+
+        $lwf->save();
         return redirect('order/orders')->with('flash_message', 'Orden Agregada!');    
     }
 
@@ -223,7 +296,8 @@ public function venta_publico()
     public function show($id)
     {
         $order = Order::join('order_clients', 'orders.id', '=', 'order_clients.order_id')
-        ->with('stat')->with('order_clients')
+        ->join('users', 'orders.user_id', '=', 'users.id')
+        ->with('stat')->with('order_clients')->with('user')
         ->select('orders.*', 'order_clients.client_id')        
         ->findOrFail($id);
 
@@ -254,7 +328,8 @@ public function venta_publico()
     public function edit($id)
     {
         $order = Order::join('order_clients', 'orders.id', '=', 'order_clients.order_id')
-        ->with('stat')->with('order_clients')
+        ->join('users', 'orders.user_id', '=', 'users.id')
+        ->with('stat')->with('order_clients')->with('user')
         ->select('orders.*', 'order_clients.client_id')        
         ->findOrFail($id);
         
@@ -268,7 +343,7 @@ public function venta_publico()
 
         $products = Product::join('inventories', 'products.id', '=', 'inventories.product_id')
         ->selectRaw("CONCAT(products.name, '   Disponibles: ', inventories.quantity) as name, products.id as id")
-        ->where('inventories.quantity', '>=', 0)
+        ->where('inventories.quantity', '>', 0)
         ->orderBy('products.name', 'asc')->get();
 
         $stats = $stats->pluck('name', 'id');
@@ -298,6 +373,7 @@ public function venta_publico()
        ]);
         $requestData = $request->all();        
         $order = Order::findOrFail($id);
+        $record_temp = Order::find($id);
         $order->update($requestData);
 
 
@@ -308,6 +384,17 @@ public function venta_publico()
                 $order->order_clients()->create(['order_id'=>$order->id, 'product_id'=>$item, 'quantity'=>$request['quantity'][$key], 'cost'=>$cost_product, 'client_id'=>$request['client_id']]);
             };
         }
+
+
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ACTUALIZAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $order->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $order->toJson(JSON_PRETTY_PRINT);
+        $lwf->info2 = $record_temp->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
 
         return redirect('order/orders')->with('flash_message', 'Orden Actualizada!');
     }
@@ -321,8 +408,28 @@ public function venta_publico()
      */
     public function destroy($id)
     {
+        
+        $record_temp = Order::find($id);
+        $record_temp2 = OrderClient::where('order_id', $id)->get();
+
+        $record_temp2 = json_decode($record_temp2, true);
+        $record_temp2['model'] = 'OrderClient';
+        $record_temp2 = json_encode($record_temp2, JSON_PRETTY_PRINT);        
+
         OrderClient::where('order_id', $id)->delete();
         Order::destroy($id);
+
+
+
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ELIMINAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $record_temp->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $record_temp->toJson(JSON_PRETTY_PRINT);        
+        $lwf->info2 = $record_temp2;        
+        $lwf->save();
 
         return redirect('order/orders')->with('flash_message', 'Orden Eliminada!');
     }

@@ -7,7 +7,7 @@
 
         <div class="col-md-10">
             <div class="card">
-                <div class="card-header">Dashboard</div>
+                <div class="card-header"><img src="{{ asset('img/redgold.png') }}" class="img d-block" style="width: 15%; height: auto;"></div>
 
                 <div class="card-body">                       
                     <a  href="{{ url('admin') }}"> <span class="badge badge-danger"> Cobranza </span> </a>  
@@ -15,7 +15,9 @@
                     <a  href="{{ url('admin/ventas') }}"> <span class="badge badge-primary"> Ventas </span> </a>  
                      <a  href="{{ url('admin/inventario') }}"> <span class="badge badge-success"> Inventario </span> </a>
                      
-                    <h2 align="center">Ventas Global</h2> 
+                    <h2 align="center">Ventas Global</h2>
+                    <a  href="{{ url('admin/ventas_vendedor') }}"><span class="badge badge-secondary"> Ventas por Vendedor</span>
+                    </a> 
                     @if($count_publicsales == 1 )
                     <a  href="{{ url('admin/ventas_publico') }}"><span class="badge badge-secondary"> Ventas Público</span>
                     </a>
@@ -47,6 +49,7 @@
                                 <th>Artículos</th>
                                 <th>Costo de Orden</th>
                                 <th>Cantidad Pagada</th>
+                                <th>Vendedor</th>
                                 <th>Estado</th>
                             </tr>
                         
@@ -60,7 +63,8 @@
                                 <td>{{ $detail->type_pay }}</td>
                                 <td>{{ $detail->articles }}</td>
                                 <td>$ {{ $detail->cost }}</td>                               
-                                <td>$ {{ $detail->advance }}</td>                               
+                                <td>$ {{ $detail->advance }}</td> 
+                                <td>{{ $detail->seller }}</td> 
                                 <td>{{ $detail->state_name }}</td>
                             </tr>
                             @endforeach
@@ -98,10 +102,17 @@
             min: 0,
             title: {
                 text: 'Ingresos'
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                }
             }
         },
         tooltip: {
-            headerFormat: '',
+            headerFormat: '<b>{point.x}</b><br/>',
             pointFormat: '<b>{series.name}: {point.y} </b><br/>' ,
             valueDecimals: 2,
             valuePrefix: '$',

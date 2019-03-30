@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Client;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\TypeClient;
-
+use App\LogWorkFlow;
 use App\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 class ClientsController extends Controller
 {
@@ -73,7 +74,16 @@ class ClientsController extends Controller
 		]);
         $requestData = $request->all();
         
-        Client::create($requestData);
+        $client = Client::create($requestData);
+
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'CREAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $client->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $client->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
 
         return redirect('client/clients')->with('flash_message', 'Cliente agregado!');
     }
@@ -132,7 +142,18 @@ class ClientsController extends Controller
         $requestData = $request->all();
         
         $client = Client::findOrFail($id);
+        $client_temp = Client::find($id);
         $client->update($requestData);
+
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ACTUALIZAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $client->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $client->toJson(JSON_PRETTY_PRINT);
+        $lwf->info2 = $client_temp->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
 
         return redirect('client/clients')->with('flash_message', 'Cliente actualizado!');
     }
@@ -145,8 +166,18 @@ class ClientsController extends Controller
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function destroy($id)
-    {
+    {   
+        $client = Client::find($id);
         Client::destroy($id);
+
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ELIMINAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $client->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $client->toJson(JSON_PRETTY_PRINT);        
+        $lwf->save();
 
         return redirect('client/clients')->with('flash_message', 'Cliente eliminado!');
     }

@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 
 use App\PublicSale;
 use App\Client;
+use App\LogWorkFlow;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 class PublicSalesController extends Controller
@@ -64,7 +66,16 @@ class PublicSalesController extends Controller
 		]);
         $requestData = $request->all();
         
-        PublicSale::create($requestData);
+        $venta_p = PublicSale::create($requestData);
+
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'CREAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $venta_p->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $venta_p->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
 
         return redirect('public_sales/public-sales')->with('flash_message', 'Cliente Público agregado!');
     }
@@ -115,7 +126,19 @@ class PublicSalesController extends Controller
         $requestData = $request->all();
         
         $publicsale = PublicSale::findOrFail($id);
+        $record_temp = PublicSale::find($id);
         $publicsale->update($requestData);
+
+
+$lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ACTUALIZAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $publicsale->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $publicsale->toJson(JSON_PRETTY_PRINT);
+        $lwf->info2 = $record_temp->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
 
         return redirect('public_sales/public-sales')->with('flash_message', 'Cliente Público actualizado!');
     }

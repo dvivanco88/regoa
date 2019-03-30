@@ -7,7 +7,7 @@
             @if($public_sales_client != null)
             {!! Form::text('client_id',$public_sales_client->client_id,['class' => 'form-control d-none', 'multiple' => false, 'required' => 'required', 'placeholder' => 'Seleccionar Cliente']) !!}
             @else           
-             {!! Form::select('client_id', isset($clients) ? $clients : [], !isset($order->id) ? null : $order->client_id, ['class' => 'form-control chosen', 'multiple' => false, 'required' => 'required']) !!}
+            {!! Form::select('client_id', isset($clients) ? $clients : [], !isset($order->id) ? null : $order->client_id, ['class' => 'form-control chosen', 'multiple' => false, 'required' => 'required']) !!}
             @endif
 
             {!! $errors->first('client_id', '<p class="help-block">:message</p>') !!}
@@ -36,7 +36,7 @@
             @if($public_sales_client != null)
             {!! Form::text('stat_id', 1, ['class' => 'form-control', 'multiple' => false, 'required' => 'required']) !!}
             @else
-             {!! Form::select('stat_id', isset($stats) ? $stats : [], isset($order->stat_id) ? $order->stat_id : '3' , ['class' => 'form-control', 'multiple' => false, 'required' => 'required']) !!}
+            {!! Form::select('stat_id', isset($stats) ? $stats : [], isset($order->stat_id) ? $order->stat_id : '3' , ['class' => 'form-control', 'multiple' => false, 'required' => 'required']) !!}
             @endif
             {!! $errors->first('stat_id', '<p class="help-block">:message</p>') !!}
         </div>
@@ -58,14 +58,14 @@
         @if($formMode === 'create')
         <div class="col-md-12 product_quantity" style="display: inline-flex; border-bottom: 1px solid white"> 
             <div class="col-md-5">
-             <div class="form-group{{ $errors->has('product_id') ? 'has-error' : ''}}">
+               <div class="form-group{{ $errors->has('product_id') ? 'has-error' : ''}}">
                 {!! Form::label('product_id', 'Producto', ['class' => 'control-label']) !!}
                 {!! Form::select('product_id[]', $products, isset($products) ? $products : [], ['class' => 'form-control chosen', 'multiple' => false, 'required' => 'required', 'onchange'=>'change_total()']) !!}
                 {!! $errors->first('product_id', '<p class="help-block">:message</p>') !!}
             </div>
         </div>
         <div class="col-md-5">
-         <div class="form-group{{ $errors->has('quantity') ? 'has-error' : ''}}">
+           <div class="form-group{{ $errors->has('quantity') ? 'has-error' : ''}}">
             {!! Form::label('quantity', 'Cantidad', ['class' => 'control-label']) !!}
             {!! Form::number('quantity[]', 1, ['step'=>'1', 'class' => 'form-control', 'required' => 'required', 'min'=>'1', 'onkeyup'=>'change_total()']) !!}
             {!! $errors->first('quantity', '<p class="help-block">:message</p>') !!}
@@ -97,7 +97,13 @@
                     <input type="number" value="{{$product->quantity}}" class="form-control quantity_set" disabled>
                 </div>
             </div> 
-            <div class="col-md-2"><span onclick="borrar_set({{$product->id}})" class="btn btn-danger delete_trash" style="margin-top: 25%;"><i class="fas fa-trash-alt"></i></span>
+
+            <div class="col-md-2">
+                @if (!Auth::user()->hasRole('Vendedor'))
+                <span onclick="borrar_set({{$product->id}})" class="btn btn-danger delete_trash" style="margin-top: 25%;">
+                    <i class="fas fa-trash-alt"></i>
+                </span>
+                @endif
             </div>
         </div>
     </div>
@@ -107,23 +113,26 @@
 
 <div class="col-md-12 product_quantity" id="products_quantity_set" style="display: none; margin-top:10px; border-bottom: 1px solid white;">
     <div class="col-md-5">
-     <div class="form-group{{ $errors->has('product_id') ? 'has-error' : ''}}">
+       <div class="form-group{{ $errors->has('product_id') ? 'has-error' : ''}}">
         {!! Form::label('product_id', 'Producto', ['class' => 'control-label']) !!}
         {!! Form::select('product_id[]', $products, isset($products) ? $products : [], ['class' => 'form-control chosen', 'multiple' => false, 'required' => 'required', 'onchange'=>'change_total()']) !!}
         {!! $errors->first('product_id', '<p class="help-block">:message</p>') !!}
     </div>
 </div>
 <div class="col-md-5">
- <div class="form-group{{ $errors->has('quantity') ? 'has-error' : ''}}">
+   <div class="form-group{{ $errors->has('quantity') ? 'has-error' : ''}}">
     {!! Form::label('quantity', 'Cantidad', ['class' => 'control-label']) !!}
     {!! Form::number('quantity[]', 1, ['step'=>'1', 'class' => 'form-control', 'required' => 'required', 'min'=>'1', 'onkeyup'=>'change_total()']) !!}
     {!! $errors->first('quantity', '<p class="help-block">:message</p>') !!}
 
 </div>
 </div>
+
+
 <div class="col-md-2">
     <span class="btn btn-danger delete_trash_new" style="margin-top: 25%;" onclick="borrar(this)"><i class="fas fa-trash-alt"></i></span>
 </div>
+
 
 
 </div>
@@ -142,6 +151,8 @@
 <span id="total_account" style="float:right; margin-right: 50px;">Total: ${{ !empty($order) ? $order->cost : 0 }}</span>
 </div>
 
+
+
 <div class="row" style="margin-top: 15px;">
     <div class="col-md-{{$public_sales_client == null ? 3 : 6}}">
         <div class="form-group{{ $errors->has('type_pay') ? 'has-error' : ''}}">
@@ -154,7 +165,7 @@
     <div class="col-md-{{$public_sales_client == null ? 3 : 6}}">
         <div class="form-group{{ $errors->has('cost') ? 'has-error' : ''}}">
             {!! Form::label('cost', 'Total $', ['class' => 'control-label']) !!}
-            {!! Form::number('cost', null, ('required' == 'required') ? ['class' => 'form-control', 'required' => 'required', 'min'=>'1', 'onchange'=>'change_due()', 'readonly'=> $public_sales_client == null ? false : true] : ['class' => 'form-control', 'min'=>'1', 'onchange'=>'change_due()', 'readonly'=> $public_sales_client == null ? false : true]) !!}
+            {!! Form::number('cost', null, ('required' == 'required') ? ['class' => 'form-control', 'required' => 'required', 'min'=>'1', 'onkeyup'=>'change_due()', 'readonly'=> $public_sales_client == null ? false : true] : ['class' => 'form-control', 'min'=>'1', 'onkeyup'=>'change_due()', 'readonly'=> $public_sales_client == null ? false : true]) !!}
             {!! $errors->first('cost', '<p class="help-block">:message</p>') !!}
         </div>
     </div>
@@ -163,7 +174,7 @@
     <div class="col-md-3">
         <div class="form-group{{ $errors->has('advance') ? 'has-error' : ''}}">
             {!! Form::label('advance', 'Anticipo $', ['class' => 'control-label']) !!}
-            {!! Form::number('advance', null, ('required' == 'required') ? ['class' => 'form-control', 'required' => 'required', 'min'=>'0', 'onchange'=>'change_due()'] : ['class' => 'form-control', 'min'=>'0', 'onchange'=>'change_due()']) !!}
+            {!! Form::number('advance', null, ('required' == 'required') ? ['class' => 'form-control', 'required' => 'required', 'min'=>'0', 'onkeyup'=>'change_due()'] : ['class' => 'form-control', 'min'=>'0', 'onkeyup'=>'change_due()']) !!}
             {!! $errors->first('advance', '<p class="help-block">:message</p>') !!}
         </div>
     </div>
@@ -178,6 +189,47 @@
     @endif
 
 </div>
+
+@if(!isset($public_sales_client) && $formMode === 'create')
+<div class="row">
+    <div class="col-md-3" >
+        <div class="form-group{{ $errors->has('discount') ? 'has-error' : ''}}">
+            {!! Form::label('discount', 'Descuento $', ['class' => 'control-label']) !!}
+            {!! Form::number('discount', (isset($order)) ? $order->discount : 0, ['class' => 'form-control', 'required' => 'required', 'min'=>'0', 'onkeyup'=>'change_due()']) !!}
+            {!! $errors->first('discount', '<p class="help-block">:message</p>') !!}
+        </div>
+    </div>
+</div>
+@endif
+
+@if(isset($order))
+<div class="col-12" style="display: inline-flex;">
+    <div class="form-group" style="display: inline-flex;">
+        <label style="width: 45%; margin-top: 5px; text-align: right; padding-right: 10px;">Vendedor: </label>
+        <input type="text" class="form-control" style="width: 55%; " value="{{ $order->user->name }}" disabled>
+        <label style="width: 45%; margin-top: 5px; text-align: right; padding-right: 10px;">Descuento: $</label>
+        <input type="text" class="form-control" id="discount" style="width: 55%; " value="{{ $order->discount }}" readonly>
+    </div>
+</div>
+@endif
+
+@if(isset($public_sales_client))
+<div class="col-12 row" >
+    <div class="col-6">
+        <div class="form-group" >
+            <label>Paga $</label>
+            <input type="number" class="form-control" id="paga" onkeyup="change_cambio()" placeholder="0" required="true">        
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="form-group" >
+            <label>Cambio $</label>
+            <input type="number" class="form-control" id="cambio" value="0" readonly>        
+        </div>
+    </div>
+</div>
+@endif
+
 <div class="form-group{{ $errors->has('observations') ? 'has-error' : ''}}" >
     {!! Form::label('observations', 'Observaciones', ['class' => 'control-label']) !!}
     {!! Form::textarea('observations', null, ['class' => 'form-control', 'rows' => '4']) !!}
@@ -186,7 +238,8 @@
 
 
 
+
 <div class="form-group">
-    {!! Form::submit('VENDER', ['class' => 'btn btn-success']) !!}
+    {!! Form::submit('VENDER', ['class' => 'btn btn-success vender']) !!}
 </div>
 

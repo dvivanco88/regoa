@@ -31,6 +31,16 @@
 	</div>
 </div>
 
+<div class="row">
+	<div class="col-12">
+		<div class="form-group{{ $errors->has('code_bar') ? 'has-error' : ''}}">
+			{!! Form::label('code_bar', 'Código de Barras', ['class' => 'control-label']) !!}			
+			{!! Form::text('code_bar', null, ['class' => 'form-control']) !!}
+			{!! $errors->first('code_bar', '<p class="help-block">:message</p>') !!}
+		</div>
+	</div>
+</div>
+
 <div class="form-group{{ $errors->has('is_active') ? 'has-error' : ''}}">
 	{!! Form::label('is_active', 'Activo?', ['class' => 'control-label']) !!}
 	<div class="checkbox">
@@ -41,6 +51,9 @@
 	</div>
 	{!! $errors->first('is_active', '<p class="help-block">:message</p>') !!}
 </div>
+
+
+
 
 
 <div class="form-group">

@@ -6,6 +6,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Warehouse;
+use App\LogWorkFlow;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 class WarehousesController extends Controller
@@ -22,10 +24,10 @@ class WarehousesController extends Controller
 
         if (!empty($keyword)) {
             $warehouses = Warehouse::where('name', 'LIKE', "%$keyword%")
-                ->orWhere('description', 'LIKE', "%$keyword%")
-                ->orWhere('is_active', 'LIKE', "%$keyword%")
-                ->orWhere('quantity', 'LIKE', "%$keyword%")
-                ->latest()->paginate($perPage);
+            ->orWhere('description', 'LIKE', "%$keyword%")
+            ->orWhere('is_active', 'LIKE', "%$keyword%")
+            ->orWhere('quantity', 'LIKE', "%$keyword%")
+            ->latest()->paginate($perPage);
         } else {
             $warehouses = Warehouse::latest()->paginate($perPage);
         }
@@ -53,14 +55,23 @@ class WarehousesController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-			'name' => 'required',
-			'description' => 'required',
-			'is_active' => 'required',
-            'priority' => 'required'
-		]);
+         'name' => 'required',
+         'description' => 'required',
+         'is_active' => 'required',
+         'priority' => 'required'
+     ]);
         $requestData = $request->all();
         
-        Warehouse::create($requestData);
+        $almacen = Warehouse::create($requestData);
+
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'CREAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $almacen->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $almacen->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
 
         return redirect('warehouse/warehouses')->with('flash_message', 'Almacén agregado!');
     }
@@ -104,14 +115,26 @@ class WarehousesController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-			'name' => 'required',
-			'description' => 'required',
-			'is_active' => 'required'
-		]);
+         'name' => 'required',
+         'description' => 'required',
+         'is_active' => 'required'
+     ]);
         $requestData = $request->all();
         
         $warehouse = Warehouse::findOrFail($id);
+        $record_temp = Warehouse::find($id);
         $warehouse->update($requestData);
+
+
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ACTUALIZAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $warehouse->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $warehouse->toJson(JSON_PRETTY_PRINT);
+        $lwf->info2 = $record_temp->toJson(JSON_PRETTY_PRINT);
+        $lwf->save();
 
         return redirect('warehouse/warehouses')->with('flash_message', 'Almacén Actualizado!');
     }
@@ -125,7 +148,19 @@ class WarehousesController extends Controller
      */
     public function destroy($id)
     {
+        $record_temp = Warehouse::find($id);
+        
         Warehouse::destroy($id);
+
+
+        $lwf = new LogWorkFlow;
+        $lwf->controller_name = Route::current()->action['controller'];
+        $lwf->action = 'ELIMINAR';
+        $lwf->page = Route::current()->uri;
+        $lwf->register_id = $record_temp->id;
+        $lwf->user_id = auth()->user()->id;
+        $lwf->info1 = $record_temp->toJson(JSON_PRETTY_PRINT);        
+        $lwf->save();
 
         return redirect('warehouse/warehouses')->with('flash_message', 'Almacén eliminado!');
     }

@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-header">Ordenes</div>
                     <div class="card-body">
-                        <a href="{{ url('/order/orders/create') }}" class="btn btn-success btn-sm" title="Add New Order">
+                        <a href="{{ url('/order/orders/create') }}" class="btn btn-success btn-sm" title="Agregar nueva orden">
                             <i class="fa fa-plus" aria-hidden="true"></i> Agregar
                         </a>
 
@@ -34,8 +34,9 @@
                                         <th>Cliente</th>
                                         <th>Deuda</th>
                                         <th>Productos</th>
-                                        <th>Día de Entrega</th>
+                                        <!--<th>Día de Entrega</th>-->
                                         <th>Estado</th>                 
+                                        <th>Vendedor</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -46,15 +47,19 @@
                                         <td>{{ $item->id }}</td>
 
                                         <td>{{ App\Client::where('id', '=', $item->client)->value('name') }}</td>
-                                        <td>{{ $item->due }}</td>
+                                        <td style="color:  <?php if((int)$item->due > 0):?>  red <?php else: ?> green  <?php endif ?>; font-weight: bold;">$ {{ $item->due }}</td>
                                         <td>{{ $item->order_clients->sum('quantity') }}</td>
-                                        <td>{{ $item->date_delivery }}</td>
+                                        <!--<td>{{ $item->date_delivery }}</td>-->
                                         <td>{{ $item->stat->name }}</td>                                        
+                                        <td>{{ $item->user->name }}</td>
                                         <td>
-                                            <a href="{{ url('/order/orders/' . $item->id) }}" title="View Order"><button class="btn btn-info btn-sm"><i class="fa fa-eye" ></i></button></a>
-                                            <a href="{{ url('/order/orders/' . $item->id . '/edit') }}" title="Edit Order">
+                                            <a href="{{ url('/order/orders/' . $item->id) }}" title="Ver Orden"><button class="btn btn-info btn-sm"><i class="fa fa-eye" ></i></button></a>
+
+                                            
+                                            <a href="{{ url('/order/orders/' . $item->id . '/edit') }}" title="Editar Orden">
                                                 <button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></button>
                                             </a>
+                                            
 
                                             @if (Auth::user()->hasRole('Todo'))
                                             {!! Form::open([
@@ -65,7 +70,7 @@
                                                 {!! Form::button('<i class="fas fa-trash-alt"></i>', array(
                                                         'type' => 'submit',
                                                         'class' => 'btn btn-danger btn-sm',
-                                                        'title' => 'Delete Order',
+                                                        'title' => 'Eliminar Orden',
                                                         'onclick'=>'return confirm("Confirm delete?")'
                                                 )) !!}
                                             {!! Form::close() !!}

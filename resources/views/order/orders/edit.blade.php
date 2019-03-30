@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header">Editar Order #{{ $order->id }}</div>
                 <div class="card-body">
-                    <a href="{{ url('/order/orders') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                    <a href="{{ url('/order/orders') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
                     <br />
                     <br />
                     
@@ -21,6 +21,8 @@
                     </ul>
                     @endif
 
+                    <img src="{{ asset('img/redgold.png') }}" class="img mx-auto d-block" style="width: 30%; height: auto; margin-top: -5%; margin-bottom: 5%;">
+                    
                     {!! Form::model($order, [
                         'method' => 'PATCH',
                         'url' => ['/order/orders', $order->id],
@@ -121,10 +123,26 @@
         });
     }
 
-    function change_due(){
+    /*function change_due(){
         total = parseInt($("#cost").val());
         
         $("#due").val( total - parseInt($("#advance").val())).toLocaleString('en-IN');
+    }*/
+
+    function change_due(){
+        
+        var antes = $("#due").val();
+        var nuevo = $("#due").val(parseInt($("#cost").val()) - parseInt($("#advance").val()) - parseInt($("#discount").val()));
+        
+        if($("#due").val() == '' || parseInt($("#due").val()) < 0 ){
+             
+            $("#due").val(antes);
+
+        }else{            
+            $("#due").val(nuevo.val());
+        }
+
+
     }
 
     function borrar(row){

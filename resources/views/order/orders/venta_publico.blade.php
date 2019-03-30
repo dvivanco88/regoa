@@ -8,9 +8,9 @@
 
         <div class="col-md-10">
             <div class="card">
-                <div class="card-header bg-secondary"><b>VENTA PÚBLICO</b></div>
+                <div class="card-header bg-secondary" style="text-align: center; color:white;"><b>VENTA PÚBLICO</b></div>
                 <div class="card-body">
-                    
+
                     <br />
                     <br />
 
@@ -24,7 +24,7 @@
 
                     {!! Form::open(['url' => '/order/orders', 'class' => 'form-horizontal', 'files' => true]) !!}
                     
-                        <img src="{{ asset('img/redgold.png') }}" class="img mx-auto d-block" style="width: 30%; height: auto; margin-top: -5%; margin-bottom: 5%;">
+                    <img src="{{ asset('img/redgold.png') }}" class="img mx-auto d-block" style="width: 30%; height: auto; margin-top: -5%; margin-bottom: 5%;">
                     
                     @include ('order.orders.form', ['formMode' => 'create'])
 
@@ -44,8 +44,9 @@
 
 <script type="text/javascript">
     change_total();
+    $('#cost').css('font-weight', 'bold')
     $('#add_product').show();
-        
+    $('.vender').hide();    
     $('#add_product_edit').hide();
     $("#advance").val(0);
     $("#due").val(0);
@@ -65,9 +66,9 @@
 
         $("input[name*='quantity[]']").each(function() {
           if(parseInt($(this).val()) < 1 ){
-           check = false; 
-       }
-   });
+             check = false; 
+         }
+     });
 
         if(check){
             var $products_quantity = $('#products_quantity').children().clone();
@@ -83,6 +84,23 @@
             alert("Campos incompletos en Productos/Cantidad.");
         }
     });
+
+    function change_cambio(){
+        $("#cambio").val(parseInt($("#paga").val()) - parseInt(($("#cost").val())));
+        if(parseInt($("#cambio").val()) >= 0){
+            $('.vender').show();    
+            $('#cambio').css('color', 'white')
+            $('#cambio').css('background-color', 'green')
+            if(parseInt($("#cambio").val()) == 0){
+                $('#cambio').css('background-color', 'lightgray')
+                $('#cambio').css('color', 'black')
+            }
+        }else{
+            $('#cambio').css('color', 'white')
+            $('#cambio').css('background-color', 'red')
+            $('.vender').hide();  
+        }
+    }
 
     function change_total(){
 
@@ -107,6 +125,7 @@
                 $('#total_account').append('Total: $' + response.toLocaleString('en-IN'));
                 $('#cost').val(response); 
                 change_due();
+                change_cambio();
             },
             error: function(jqXHR, textStatus, errorThrown) {
 
@@ -121,8 +140,8 @@
     }
 
     function borrar(row){
-     $(row).closest('.product_quantity').remove();        
- }
+       $(row).closest('.product_quantity').remove();        
+   }
 
 </script>
 @endsection

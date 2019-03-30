@@ -10,7 +10,7 @@
             <div class="card">
                 <div class="card-header">Crear Order</div>
                 <div class="card-body">
-                    <a href="{{ url('/order/orders') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                    <a href="{{ url('/order/orders') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
                     <br />
                     <br />
 
@@ -21,6 +21,8 @@
                         @endforeach
                     </ul>
                     @endif
+
+                    <img src="{{ asset('img/redgold.png') }}" class="img mx-auto d-block" style="width: 30%; height: auto; margin-top: -5%; margin-bottom: 5%;">
 
                     {!! Form::open(['url' => '/order/orders', 'class' => 'form-horizontal', 'files' => true]) !!}
 
@@ -119,7 +121,19 @@
     }
 
     function change_due(){
-        $("#due").val(parseInt(($("#cost").val()) - parseInt($("#advance").val())).toLocaleString('en-IN'));
+
+        var antes = $("#due").val();
+        var nuevo = $("#due").val(parseInt($("#cost").val()) - parseInt($("#advance").val()) - parseInt($("#discount").val()));
+        
+        if($("#due").val() == '' || parseInt($("#due").val()) < 0 ){
+             
+            $("#due").val(antes);
+
+        }else{            
+            $("#due").val(nuevo.val());
+        }
+
+
     }
 
     function borrar(row){

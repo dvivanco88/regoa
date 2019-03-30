@@ -8,13 +8,15 @@
 
             <div class="col-md-10">
                 <div class="card">
-                    <div class="card-header">Dashboard</div>
+                    <div class="card-header"><img src="{{ asset('img/redgold.png') }}" class="img d-block" style="width: 15%; height: auto;"></div>
 
                     <div class="card-body">                       
                         <a  href="{{ url('admin') }}"> <span class="badge btn btn-danger"> Cobranza </span> </a>  
-                        <a  href="{{ url('admin/pendientes_entregas') }}"> <span class="badge btn btn-warning"> Pendientes de Entrega </span> </a>  
+                        <a  href="{{ url('admin/pendientes_entregas') }}"> <span class="badge btn btn-warning"> Pendientes de Entrega </span> </a>
+                        @if (Auth::user()->hasRole('Todo') || Auth::user()->hasRole('Admin'))  
                         <a  href="{{ url('admin/ventas') }}"> <span class="badge btn btn-primary"> Ventas </span> </a>  
-                         <a  href="{{ url('admin/inventario') }}"> <span class="badge badge-secondary"> Inventario </span> </a>
+                         <a  href="{{ url('admin/inventario') }}"> <span class="badge badge-success"> Inventario </span> </a>
+                         @endif
 
                         <h2 align="center">Cobranza</h2>
                         <div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>  
@@ -26,8 +28,10 @@
                                     <th># Orden</th>
                                     <th>Nombre</th>
                                     <th>Fecha de Entrega</th>
+                                    <th>Ultimo Movimiento</th>
                                     <th>Artículos</th>
                                     <th>Adeudo</th>
+                                    <th>Vendedor</th>
                                     <th></th>
                                 </tr>
                             
@@ -37,8 +41,10 @@
                                         <td><a href="/order/orders/{{ $detail->id }}">{{ $detail->id }}</a></td>
                                         <td>{{ $detail->name }}</td>
                                         <td>{{ $detail->date_delivery }}</td>
+                                        <td>{{ $detail->actualizacion }}</td>
                                         <td>{{ $detail->articles }}</td>
-                                        <td>$ {{ $detail->due }}</td>
+                                        <td  style="color:  <?php if((int)$detail->due > 0):?>  red <?php else: ?> green  <?php endif ?>; font-weight: bold;">$ {{ $detail->due }}</td>
+                                        <td>{{ $detail->seller }}</td>
                                         <td><a href="/admin/abono/{{ $detail->id }}"><span class="badge btn btn-success" style="cursor: pointer;"> Abono </span></a></td>
                                     </tr>
                                 @endforeach

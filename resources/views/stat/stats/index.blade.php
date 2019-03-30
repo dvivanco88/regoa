@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-header">Lista de Estados</div>
                     <div class="card-body">
-                        <a href="{{ url('/stat/stats/create') }}" class="btn btn-success btn-sm" title="Add New Stat">
+                        <a href="{{ url('/stat/stats/create') }}" class="btn btn-success btn-sm" title="Agregar nuevo estado">
                             <i class="fa fa-plus" aria-hidden="true"></i> Agregar
                         </a>
 
@@ -43,8 +43,8 @@
                                             NO
                                         @endif</td>
                                         <td>
-                                            <a href="{{ url('/stat/stats/' . $item->id) }}" title="View Stat"><button class="btn btn-info btn-sm"><i class="fa fa-eye" aria-hidden="true"></i></button></a>
-                                            <a href="{{ url('/stat/stats/' . $item->id . '/edit') }}" title="Edit Stat"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i></button></a>
+                                            <a href="{{ url('/stat/stats/' . $item->id) }}" title="Ver Estado"><button class="btn btn-info btn-sm"><i class="fa fa-eye" aria-hidden="true"></i></button></a>
+                                            <a href="{{ url('/stat/stats/' . $item->id . '/edit') }}" title="Editar Estado"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i></button></a>
 
                                              @if (Auth::user()->hasRole('Todo'))
                                             {!! Form::open([
@@ -55,7 +55,7 @@
                                                 {!! Form::button('<i class="fas fa-trash-alt"></i>', array(
                                                         'type' => 'submit',
                                                         'class' => 'btn btn-danger btn-sm',
-                                                        'title' => 'Delete Stat',
+                                                        'title' => 'Eliminar Estado',
                                                         'onclick'=>'return confirm("Confirm delete?")'
                                                 )) !!}
                                             {!! Form::close() !!}

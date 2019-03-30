@@ -7,7 +7,7 @@
 
         <div class="col-md-10">
             <div class="card">
-                <div class="card-header">Inventarios</div>
+                <div class="card-header"><img src="{{ asset('img/redgold.png') }}" class="img d-block" style="width: 15%; height: auto;"></div>
 
                 <div class="card-body">                       
                     <a  href="{{ url('admin') }}"> <span class="badge badge-danger"> Cobranza </span> </a>  
@@ -48,7 +48,7 @@
                                         <tr>
 
                                             <td>{{ $detail->name }}</td>
-                                            <td>{{ $detail->quantity }}</td>
+                                            <td style="color:  <?php if((int)$detail->quantity <= 0):?>  red <?php elseif ((int)$detail->quantity <= 10):?> orange <?php else: ?> black  <?php endif ?>; font-weight: bold;">{{ $detail->quantity }}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -59,9 +59,9 @@
 
                     @foreach($warehouses as $w)
                     <div class="col-12" style="margin-top: 5%;">
-                        <details><summary>{{ $w->name }}</summary> 
+                        <details><summary>{{ $w->name }} , Prioridad: {{$w->priority }}</summary> 
                             <div style="border: 1px solid #C4C6C8; padding: 3px; border-radius: 5px;">
-                                <h3 align="center">{{ $w->name }}</h3>
+                                <h3 align="center">{{ $w->name }} ({{$w->priority }})</h3>
                                 <table id="table_{{ $w->name }}" class="table table-striped">
 
                                     <tr style="background-color: black; color:white;">                                
@@ -77,7 +77,8 @@
                                             ->where('warehouse_id', '=', $w->id)->first();
                                             ?>
                                             <td>{{ $p->name }}</td>
-                                            <td> @if($cantidad) 
+                                            <td style="color:  <?php if($cantidad && (int)$cantidad->quantity <= 0):?>  red <?php elseif ($cantidad && (int)$cantidad->quantity <= 10):?> orange <?php else: ?> black  <?php endif ?>; font-weight: bold;">
+                                                @if($cantidad) 
                                                 {{ $cantidad->quantity }} 
                                                 @else
                                                 0

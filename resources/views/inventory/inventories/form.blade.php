@@ -15,7 +15,7 @@
 
     <div class="col-md-6">
         <div class="form-group{{ $errors->has('quantity') ? 'has-error' : ''}}">
-            {!! Form::label('quantity', 'Quantity', ['class' => 'control-label']) !!}
+            {!! Form::label('quantity', 'Cantidad', ['class' => 'control-label']) !!}
             {!! Form::number('quantity', null, ('required' == 'required') ? ['class' => 'form-control', 'required' => 'required'] : ['class' => 'form-control']) !!}
             {!! $errors->first('quantity', '<p class="help-block">:message</p>') !!}
         </div>

@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header">Inventarios</div>
                 <div class="card-body">
-                    
+
 
                     <span class="btn btn-primary btn-sm" id="btn_print" title="Print">
                         <i class="fas fa-print" aria-hidden="true"></i> Imprimir
@@ -48,32 +48,52 @@
                                     <td>{{ $p->id }}</td>
                                     <td>{{ $p->name }}</td>
                                     
-                                @foreach($warehouses as $w)                                 
-                                
-                                <td>
-                                    <?php 
-                                    $cantidad = $inventories->where('product_id', '=', $p->id)
-                                    ->where('warehouse_id', '=', $w->id)->first();
-                                    ?>
-                                    @if($cantidad) 
-                                    {{ $cantidad->quantity }} <a href="{{ url('/inventory/inventories/'. $cantidad->id.'/edit') }}" title="Edit Inventory">
-                                            <span class="badge badge-primary d-print-none" style="margin-left: 1%;">Editar</span>
+                                    @foreach($warehouses as $w)                                 
+
+                                    <td>
+                                        <?php 
+                                        $cantidad = $inventories->where('product_id', '=', $p->id)
+                                        ->where('warehouse_id', '=', $w->id)->first();
+                                        ?>
+                                        @if($cantidad) 
+                                        <span style="color:  <?php if((int)$cantidad->quantity <= 0):?>  red <?php elseif ((int)$cantidad->quantity <= 10):?> orange <?php else: ?> black  <?php endif ?>; font-weight: bold;">
+                                        {{ $cantidad->quantity }} 
+                                        </span>
+                                        @if (Auth::user()->hasRole('Todo') || Auth::user()->hasRole('Admin'))
+                                        <a href="{{ url('/inventory/inventories/'. $cantidad->id.'/edit') }}" title="Editar Inventario">
+                                            <span class="badge badge-primary d-print-none" style="margin-left: 1%;"><i class="fas fa-pencil-alt"></i></span>
                                         </a>
-                                    @else
-                                    0 <a href="{{ url('/inventory/inventories/create?product_id='.$p->id.'&warehouse_id='.$w->id ) }}" title="Edit Inventory">
-                                            <span class="badge badge-primary d-print-none" style="margin-left: 1%;">Editar</span>
+                                        @endif
+                                        <a href="{{ url('/inventory/inventories/'. $cantidad->id.'/add') }}" title="Agregar Inventario">
+                                            <span class="badge badge-success d-print-none" style="margin-left: 1%;"><i aria-hidden="true" class="fa fa-plus"></i></span>
                                         </a>
-                                    @endif
-                                </td>
+                                        @else
+                                        <span style="color: red; font-weight: bold;">
+                                            0 
+                                        </span>
+                                        @if (Auth::user()->hasRole('Todo') || Auth::user()->hasRole('Admin'))
+                                        <a href="{{ url('/inventory/inventories/create?product_id='.$p->id.'&warehouse_id='.$w->id ) }}" title="Editar Inventario">
+
+                                            <span class="badge badge-primary d-print-none" style="margin-left: 1%;"><i class="fas fa-pencil-alt"></i></span>
+
+                                        </a>
+                                        @endif
+                                        <a href="{{ url('/inventory/inventories/add?product_id='.$p->id.'&warehouse_id='.$w->id ) }}" title="Agregar Inventario">
+
+                                            <span class="badge badge-success d-print-none" style="margin-left: 1%;"><i aria-hidden="true" class="fa fa-plus"></i></span>
+
+                                        </a>
+                                        @endif
+                                    </td>
 
                                     
-                                   
+
                                     
                                     
 
                                     
-                                
-                                @endforeach
+
+                                    @endforeach
                                 </tr>
 
 
@@ -91,14 +111,14 @@
 @endsection
 
 
- @section('scripts')
-            <script type="text/javascript">
-                
-                $("#btn_print").click(function() {
-                  $('.print-inventary').printThis();
-              });
+@section('scripts')
+<script type="text/javascript">
 
-                
+    $("#btn_print").click(function() {
+      $('.print-inventary').printThis();
+  });
 
-          </script>
-          @endsection
+
+
+</script>
+@endsection

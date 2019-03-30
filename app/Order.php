@@ -33,23 +33,25 @@ class Order extends Model
      *
      * @var array
      */
-    protected $fillable = ['stat_id', 'date_delivery', 'date_pay', 'cost', 'type_pay', 'observations', 'advance', 'due'];
-     protected $appends = ['client_id', 'array_product_id','quantity'];
+    protected $fillable = ['stat_id', 'date_delivery', 'date_pay', 'cost', 'type_pay', 'observations', 'advance', 'due', 'user_id', 'discount'];
+     //protected $appends = ['client_id', 'array_product_id','quantity'];
 
     public function stat()
     {
         return $this->belongsTo('App\Stat');
     }
 
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     public function order_clients()
     {
         return $this->hasMany('App\OrderClient');
     }
-    
+
    
-
-    
-
 
 
     /**

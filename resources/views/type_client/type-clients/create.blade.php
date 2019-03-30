@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-header">Crear Tipo de Cliente</div>
                     <div class="card-body">
-                        <a href="{{ url('/type_client/type-clients') }}" title="Back"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> VOlver</button></a>
+                        <a href="{{ url('/type_client/type-clients') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> VOlver</button></a>
                         <br />
                         <br />
 

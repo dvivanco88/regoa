@@ -51,7 +51,11 @@
                                         @endif </td>
                                         <td>
                                             <a href="{{ url('/admin/users/' . $item->id) }}" title="View User"><button class="btn btn-info btn-sm"><i class="fa fa-eye" aria-hidden="true"></i></button></a>
+                                            @if($item->roles()->first()->label != "Desarrollador" )
                                             <a href="{{ url('/admin/users/' . $item->id . '/edit') }}" title="Edit User"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i></button></a>
+                                            @elseif(Auth::user()->hasRole('Todo'))
+                                            <a href="{{ url('/admin/users/' . $item->id . '/edit') }}" title="Edit User"><button class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></i></button></a>
+                                            @endif
                                             
                                             @if(Auth::user()->hasRole('Todo'))
                                             {!! Form::open([
