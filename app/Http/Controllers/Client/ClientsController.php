@@ -66,11 +66,8 @@ class ClientsController extends Controller
     {
         $this->validate($request, [
 			'name' => 'required',
-			'telephone1' => 'required',
-            'type_client_id' => 'required',
-            'email' => 'required',
-            'adress' => 'required'
-			
+			'telephone1' => 'required'
+            			
 		]);
         $requestData = $request->all();
         
@@ -134,10 +131,8 @@ class ClientsController extends Controller
     {
         $this->validate($request, [
 			'name' => 'required',
-            'telephone1' => 'required',
-            'type_client_id' => 'required',
-            'email' => 'required',
-            'adress' => 'required'
+            'telephone1' => 'required'
+            
 		]);
         $requestData = $request->all();
         
